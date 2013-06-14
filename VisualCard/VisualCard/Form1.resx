@@ -117,6 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label19.Text" xml:space="preserve">
+    <value>
+操作说明：
+
+一 生成RSA公钥
+
+   利用可视卡上SE模块生成RSA公私
+   钥对，并显示公钥
+
+二 转账
+
+   将源账户，目的账户及转账金额信息
+   送可视卡，可视卡生成一认证码并显
+   示在可视卡上，同时回传经过卡上SE
+   模块处理后的交易信息，两边确认后
+   完成交易
+
+三 查询余额
+
+   单击“查询余额”按钮读取卡中余额
+
+四 操作状态
+
+   显示操作是否成功</value>
+  </data>
   <data name="label3.Text" xml:space="preserve">
     <value>
 操作说明：
@@ -142,6 +167,56 @@
              返回的ATR数据
    
 </value>
+  </data>
+  <data name="label12.Text" xml:space="preserve">
+    <value>
+操作说明：
+
+一 卡状态检测
+
+   探卡：检测卡是否插入转接器。
+   卡掉电：通过转接器给卡掉电。
+   卡上电复位：通过转接器给卡上电并
+              复位。
+
+二 读写卡操作
+
+   读卡：从卡上读取8bytes随机数据
+   写卡：往卡里写入数据。请在输入
+         框中输入不超过6位数字
+
+三 操作状态及返回数据
+
+   操作状态：显示操作是否成功
+   返回SW：操作成功返回的SW数据
+   返回数据：卡上电复位成功后显示
+             返回的ATR数据
+   
+</value>
+  </data>
+  <data name="label14.Text" xml:space="preserve">
+    <value>
+操作说明：
+
+一 充值
+
+   输入充值金额，单击“充值”按钮，
+   可视卡屏幕上显示充值金额，确认无
+   误后根据操作提示完成充值。
+
+二 消费
+
+   输入消费金额，单击“消费”按钮，
+   可视卡屏幕上显示充值金额，确认无
+   误后根据操作提示完成充值。
+
+三 查询余额
+
+   单击“查询余额”按钮读取卡中余额
+
+四 操作状态
+
+   显示操作是否成功</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

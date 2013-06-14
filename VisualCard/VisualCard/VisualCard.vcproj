@@ -5,6 +5,10 @@
 	Name="VisualCard"
 	ProjectGUID="{6B1FDC49-C0A7-4916-9895-60DAB5B0E526}"
 	RootNamespace="VisualCard"
+	SccProjectName="Svn"
+	SccAuxPath="Svn"
+	SccLocalPath="Svn"
+	SccProvider="SubversionScc"
 	Keyword="ManagedCProj"
 	>
 	<Platforms>
