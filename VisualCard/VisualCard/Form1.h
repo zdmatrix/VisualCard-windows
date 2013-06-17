@@ -1,6 +1,10 @@
 #pragma once
 
 
+#include <iostream>
+#include <string>
+#include <sstream>
+
 namespace VisualCard {
 
 	using namespace System;
@@ -9,6 +13,9 @@ namespace VisualCard {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+
+	using namespace std;
+
 
 	/// <summary>
 	/// Form1 摘要
@@ -21,6 +28,15 @@ namespace VisualCard {
 	/// </summary>
 	public ref class Form1 : public System::Windows::Forms::Form
 	{
+	
+	public:
+
+		int g_nChallangeCodeTimes;
+		array<int^>^ g_nChallangeCode;
+		String^ strChallangeCode;
+		
+	
+
 	public:
 		Form1(void)
 		{
@@ -28,6 +44,8 @@ namespace VisualCard {
 			//
 			//TODO: 在此处添加构造函数代码
 			//
+			g_nChallangeCodeTimes = 0;
+			g_nChallangeCode = gcnew array<int^>(6);
 		}
 
 	protected:
@@ -111,10 +129,31 @@ namespace VisualCard {
 	private: System::Windows::Forms::TextBox^  textOpStatusNewUKey;
 
 	private: System::Windows::Forms::Label^  label25;
-	private: System::Windows::Forms::TreeView^  treeView1;
+
 	private: System::Windows::Forms::Button^  btnSendData;
 	private: System::Windows::Forms::TextBox^  textBanlanceNewUKey;
 	private: System::Windows::Forms::Button^  button6;
+	private: System::Windows::Forms::PictureBox^  pictureBoxAuthCode;
+
+
+	private: System::Windows::Forms::Label^  label26;
+	private: System::Windows::Forms::Button^  btnDownloadCode;
+
+
+	private: System::Windows::Forms::Label^  label28;
+private: System::Windows::Forms::TextBox^  textChallangeCode;
+
+	private: System::Windows::Forms::Button^  btnGenerateChallangeCode;
+	private: System::Windows::Forms::Label^  label27;
+private: System::Windows::Forms::TextBox^  textBox13;
+private: System::Windows::Forms::Label^  label31;
+private: System::Windows::Forms::PictureBox^  pictureBoxLogIn;
+
+private: System::Windows::Forms::TextBox^  textBox12;
+private: System::Windows::Forms::Button^  btnLogIn;
+private: System::Windows::Forms::Label^  label30;
+private: System::Windows::Forms::Label^  label29;
+
 
 
 
@@ -135,6 +174,8 @@ namespace VisualCard {
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Form1::typeid));
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->textSW = (gcnew System::Windows::Forms::TextBox());
+			this->textOpStatusCardTest = (gcnew System::Windows::Forms::TextBox());
 			this->textRandomData = (gcnew System::Windows::Forms::TextBox());
 			this->textWriteCard = (gcnew System::Windows::Forms::TextBox());
 			this->label7 = (gcnew System::Windows::Forms::Label());
@@ -149,13 +190,53 @@ namespace VisualCard {
 			this->btnPowerDown = (gcnew System::Windows::Forms::Button());
 			this->btnProbeCard = (gcnew System::Windows::Forms::Button());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->textOpStatusElecMoney = (gcnew System::Windows::Forms::TextBox());
+			this->label18 = (gcnew System::Windows::Forms::Label());
+			this->label17 = (gcnew System::Windows::Forms::Label());
+			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
+			this->btnCounsume = (gcnew System::Windows::Forms::Button());
+			this->label16 = (gcnew System::Windows::Forms::Label());
+			this->btnCharge = (gcnew System::Windows::Forms::Button());
+			this->textBox6 = (gcnew System::Windows::Forms::TextBox());
+			this->label15 = (gcnew System::Windows::Forms::Label());
+			this->textBanlanceElecMoney = (gcnew System::Windows::Forms::TextBox());
+			this->btnBanlance = (gcnew System::Windows::Forms::Button());
+			this->label14 = (gcnew System::Windows::Forms::Label());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->pictureBoxAuthCode = (gcnew System::Windows::Forms::PictureBox());
+			this->textBanlanceNewUKey = (gcnew System::Windows::Forms::TextBox());
+			this->button6 = (gcnew System::Windows::Forms::Button());
+			this->textOpStatusNewUKey = (gcnew System::Windows::Forms::TextBox());
+			this->label25 = (gcnew System::Windows::Forms::Label());
+			this->btnSendData = (gcnew System::Windows::Forms::Button());
+			this->label24 = (gcnew System::Windows::Forms::Label());
+			this->textBox11 = (gcnew System::Windows::Forms::TextBox());
+			this->textBox10 = (gcnew System::Windows::Forms::TextBox());
+			this->label23 = (gcnew System::Windows::Forms::Label());
+			this->textBox9 = (gcnew System::Windows::Forms::TextBox());
+			this->label22 = (gcnew System::Windows::Forms::Label());
+			this->label21 = (gcnew System::Windows::Forms::Label());
+			this->btnRSAKey = (gcnew System::Windows::Forms::Button());
+			this->textBox8 = (gcnew System::Windows::Forms::TextBox());
+			this->label20 = (gcnew System::Windows::Forms::Label());
+			this->label19 = (gcnew System::Windows::Forms::Label());
 			this->tabPage4 = (gcnew System::Windows::Forms::TabPage());
+			this->textBox13 = (gcnew System::Windows::Forms::TextBox());
+			this->label31 = (gcnew System::Windows::Forms::Label());
+			this->pictureBoxLogIn = (gcnew System::Windows::Forms::PictureBox());
+			this->textBox12 = (gcnew System::Windows::Forms::TextBox());
+			this->btnLogIn = (gcnew System::Windows::Forms::Button());
+			this->label30 = (gcnew System::Windows::Forms::Label());
+			this->label29 = (gcnew System::Windows::Forms::Label());
+			this->btnDownloadCode = (gcnew System::Windows::Forms::Button());
+			this->label28 = (gcnew System::Windows::Forms::Label());
+			this->textChallangeCode = (gcnew System::Windows::Forms::TextBox());
+			this->btnGenerateChallangeCode = (gcnew System::Windows::Forms::Button());
+			this->label27 = (gcnew System::Windows::Forms::Label());
+			this->label26 = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->comboBoxDevice = (gcnew System::Windows::Forms::ComboBox());
 			this->splitter1 = (gcnew System::Windows::Forms::Splitter());
-			this->textOpStatusCardTest = (gcnew System::Windows::Forms::TextBox());
-			this->textSW = (gcnew System::Windows::Forms::TextBox());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
@@ -171,39 +252,13 @@ namespace VisualCard {
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->button5 = (gcnew System::Windows::Forms::Button());
-			this->label14 = (gcnew System::Windows::Forms::Label());
-			this->btnBanlance = (gcnew System::Windows::Forms::Button());
-			this->textBanlanceElecMoney = (gcnew System::Windows::Forms::TextBox());
-			this->label15 = (gcnew System::Windows::Forms::Label());
-			this->textBox6 = (gcnew System::Windows::Forms::TextBox());
-			this->btnCharge = (gcnew System::Windows::Forms::Button());
-			this->label16 = (gcnew System::Windows::Forms::Label());
-			this->btnCounsume = (gcnew System::Windows::Forms::Button());
-			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
-			this->label17 = (gcnew System::Windows::Forms::Label());
-			this->label18 = (gcnew System::Windows::Forms::Label());
-			this->textOpStatusElecMoney = (gcnew System::Windows::Forms::TextBox());
-			this->label19 = (gcnew System::Windows::Forms::Label());
-			this->label20 = (gcnew System::Windows::Forms::Label());
-			this->textBox8 = (gcnew System::Windows::Forms::TextBox());
-			this->btnRSAKey = (gcnew System::Windows::Forms::Button());
-			this->label21 = (gcnew System::Windows::Forms::Label());
-			this->label22 = (gcnew System::Windows::Forms::Label());
-			this->textBox9 = (gcnew System::Windows::Forms::TextBox());
-			this->label23 = (gcnew System::Windows::Forms::Label());
-			this->textBox10 = (gcnew System::Windows::Forms::TextBox());
-			this->textBox11 = (gcnew System::Windows::Forms::TextBox());
-			this->label24 = (gcnew System::Windows::Forms::Label());
-			this->btnSendData = (gcnew System::Windows::Forms::Button());
-			this->treeView1 = (gcnew System::Windows::Forms::TreeView());
-			this->label25 = (gcnew System::Windows::Forms::Label());
-			this->textOpStatusNewUKey = (gcnew System::Windows::Forms::TextBox());
-			this->button6 = (gcnew System::Windows::Forms::Button());
-			this->textBanlanceNewUKey = (gcnew System::Windows::Forms::TextBox());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
 			this->tabPage3->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxAuthCode))->BeginInit();
+			this->tabPage4->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxLogIn))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// tabControl1
@@ -250,6 +305,22 @@ namespace VisualCard {
 			this->tabPage1->Size = System::Drawing::Size(560, 363);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"卡测试";
+			// 
+			// textSW
+			// 
+			this->textSW->Location = System::Drawing::Point(84, 302);
+			this->textSW->Name = L"textSW";
+			this->textSW->ReadOnly = true;
+			this->textSW->Size = System::Drawing::Size(240, 23);
+			this->textSW->TabIndex = 15;
+			// 
+			// textOpStatusCardTest
+			// 
+			this->textOpStatusCardTest->Location = System::Drawing::Point(84, 266);
+			this->textOpStatusCardTest->Name = L"textOpStatusCardTest";
+			this->textOpStatusCardTest->ReadOnly = true;
+			this->textOpStatusCardTest->Size = System::Drawing::Size(240, 23);
+			this->textOpStatusCardTest->TabIndex = 14;
 			// 
 			// textRandomData
 			// 
@@ -421,13 +492,124 @@ namespace VisualCard {
 			this->tabPage2->Text = L"电子现金";
 			this->tabPage2->UseVisualStyleBackColor = true;
 			// 
+			// textOpStatusElecMoney
+			// 
+			this->textOpStatusElecMoney->Location = System::Drawing::Point(91, 288);
+			this->textOpStatusElecMoney->Name = L"textOpStatusElecMoney";
+			this->textOpStatusElecMoney->ReadOnly = true;
+			this->textOpStatusElecMoney->Size = System::Drawing::Size(196, 26);
+			this->textOpStatusElecMoney->TabIndex = 16;
+			// 
+			// label18
+			// 
+			this->label18->AutoSize = true;
+			this->label18->Location = System::Drawing::Point(6, 241);
+			this->label18->Name = L"label18";
+			this->label18->Size = System::Drawing::Size(96, 16);
+			this->label18->TabIndex = 15;
+			this->label18->Text = L"四 操作状态";
+			// 
+			// label17
+			// 
+			this->label17->AutoSize = true;
+			this->label17->Location = System::Drawing::Point(6, 159);
+			this->label17->Name = L"label17";
+			this->label17->Size = System::Drawing::Size(96, 16);
+			this->label17->TabIndex = 14;
+			this->label17->Text = L"三 查询余额";
+			// 
+			// textBox7
+			// 
+			this->textBox7->Location = System::Drawing::Point(71, 115);
+			this->textBox7->Name = L"textBox7";
+			this->textBox7->Size = System::Drawing::Size(158, 26);
+			this->textBox7->TabIndex = 13;
+			// 
+			// btnCounsume
+			// 
+			this->btnCounsume->Location = System::Drawing::Point(237, 115);
+			this->btnCounsume->Name = L"btnCounsume";
+			this->btnCounsume->Size = System::Drawing::Size(91, 23);
+			this->btnCounsume->TabIndex = 12;
+			this->btnCounsume->Text = L"消费";
+			this->btnCounsume->UseVisualStyleBackColor = true;
+			// 
+			// label16
+			// 
+			this->label16->AutoSize = true;
+			this->label16->Location = System::Drawing::Point(6, 83);
+			this->label16->Name = L"label16";
+			this->label16->Size = System::Drawing::Size(64, 16);
+			this->label16->TabIndex = 11;
+			this->label16->Text = L"二 消费";
+			// 
+			// btnCharge
+			// 
+			this->btnCharge->Location = System::Drawing::Point(238, 37);
+			this->btnCharge->Name = L"btnCharge";
+			this->btnCharge->Size = System::Drawing::Size(90, 23);
+			this->btnCharge->TabIndex = 10;
+			this->btnCharge->Text = L"充值";
+			this->btnCharge->UseVisualStyleBackColor = true;
+			// 
+			// textBox6
+			// 
+			this->textBox6->Location = System::Drawing::Point(71, 37);
+			this->textBox6->Name = L"textBox6";
+			this->textBox6->Size = System::Drawing::Size(158, 26);
+			this->textBox6->TabIndex = 9;
+			// 
+			// label15
+			// 
+			this->label15->AutoSize = true;
+			this->label15->Location = System::Drawing::Point(6, 8);
+			this->label15->Name = L"label15";
+			this->label15->Size = System::Drawing::Size(64, 16);
+			this->label15->TabIndex = 8;
+			this->label15->Text = L"一 充值";
+			// 
+			// textBanlanceElecMoney
+			// 
+			this->textBanlanceElecMoney->Location = System::Drawing::Point(71, 197);
+			this->textBanlanceElecMoney->Name = L"textBanlanceElecMoney";
+			this->textBanlanceElecMoney->ReadOnly = true;
+			this->textBanlanceElecMoney->Size = System::Drawing::Size(158, 26);
+			this->textBanlanceElecMoney->TabIndex = 7;
+			this->textBanlanceElecMoney->TextChanged += gcnew System::EventHandler(this, &Form1::textBanlanceElecMoney_TextChanged);
+			// 
+			// btnBanlance
+			// 
+			this->btnBanlance->Font = (gcnew System::Drawing::Font(L"宋体", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->btnBanlance->Location = System::Drawing::Point(237, 197);
+			this->btnBanlance->Name = L"btnBanlance";
+			this->btnBanlance->Size = System::Drawing::Size(91, 23);
+			this->btnBanlance->TabIndex = 6;
+			this->btnBanlance->Text = L"查询余额";
+			this->btnBanlance->UseVisualStyleBackColor = true;
+			// 
+			// label14
+			// 
+			this->label14->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->label14->BackColor = System::Drawing::Color::LightGray;
+			this->label14->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->label14->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label14->Location = System::Drawing::Point(335, 8);
+			this->label14->Margin = System::Windows::Forms::Padding(5);
+			this->label14->Name = L"label14";
+			this->label14->Size = System::Drawing::Size(220, 350);
+			this->label14->TabIndex = 5;
+			this->label14->Text = resources->GetString(L"label14.Text");
+			// 
 			// tabPage3
 			// 
+			this->tabPage3->Controls->Add(this->pictureBoxAuthCode);
 			this->tabPage3->Controls->Add(this->textBanlanceNewUKey);
 			this->tabPage3->Controls->Add(this->button6);
 			this->tabPage3->Controls->Add(this->textOpStatusNewUKey);
 			this->tabPage3->Controls->Add(this->label25);
-			this->tabPage3->Controls->Add(this->treeView1);
 			this->tabPage3->Controls->Add(this->btnSendData);
 			this->tabPage3->Controls->Add(this->label24);
 			this->tabPage3->Controls->Add(this->textBox11);
@@ -448,8 +630,194 @@ namespace VisualCard {
 			this->tabPage3->Text = L"二代UKey";
 			this->tabPage3->UseVisualStyleBackColor = true;
 			// 
+			// pictureBoxAuthCode
+			// 
+			this->pictureBoxAuthCode->Location = System::Drawing::Point(22, 177);
+			this->pictureBoxAuthCode->Name = L"pictureBoxAuthCode";
+			this->pictureBoxAuthCode->Size = System::Drawing::Size(302, 105);
+			this->pictureBoxAuthCode->TabIndex = 25;
+			this->pictureBoxAuthCode->TabStop = false;
+			this->pictureBoxAuthCode->Click += gcnew System::EventHandler(this, &Form1::pictureBoxAuthCode_Click);
+			// 
+			// textBanlanceNewUKey
+			// 
+			this->textBanlanceNewUKey->Location = System::Drawing::Point(441, 21);
+			this->textBanlanceNewUKey->Name = L"textBanlanceNewUKey";
+			this->textBanlanceNewUKey->ReadOnly = true;
+			this->textBanlanceNewUKey->Size = System::Drawing::Size(111, 26);
+			this->textBanlanceNewUKey->TabIndex = 24;
+			this->textBanlanceNewUKey->TextChanged += gcnew System::EventHandler(this, &Form1::textBanlanceNewUKey_TextChanged);
+			// 
+			// button6
+			// 
+			this->button6->Font = (gcnew System::Drawing::Font(L"宋体", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->button6->Location = System::Drawing::Point(344, 21);
+			this->button6->Name = L"button6";
+			this->button6->Size = System::Drawing::Size(91, 23);
+			this->button6->TabIndex = 23;
+			this->button6->Text = L"查询余额";
+			this->button6->UseVisualStyleBackColor = true;
+			// 
+			// textOpStatusNewUKey
+			// 
+			this->textOpStatusNewUKey->Location = System::Drawing::Point(46, 320);
+			this->textOpStatusNewUKey->Name = L"textOpStatusNewUKey";
+			this->textOpStatusNewUKey->ReadOnly = true;
+			this->textOpStatusNewUKey->Size = System::Drawing::Size(237, 26);
+			this->textOpStatusNewUKey->TabIndex = 22;
+			// 
+			// label25
+			// 
+			this->label25->AutoSize = true;
+			this->label25->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label25->Location = System::Drawing::Point(6, 294);
+			this->label25->Name = L"label25";
+			this->label25->Size = System::Drawing::Size(84, 14);
+			this->label25->TabIndex = 21;
+			this->label25->Text = L"三 操作状态";
+			// 
+			// btnSendData
+			// 
+			this->btnSendData->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->btnSendData->Location = System::Drawing::Point(249, 102);
+			this->btnSendData->Name = L"btnSendData";
+			this->btnSendData->Size = System::Drawing::Size(75, 47);
+			this->btnSendData->TabIndex = 19;
+			this->btnSendData->Text = L"提交数据给可视卡";
+			this->btnSendData->UseVisualStyleBackColor = true;
+			// 
+			// label24
+			// 
+			this->label24->AutoSize = true;
+			this->label24->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label24->Location = System::Drawing::Point(19, 150);
+			this->label24->Name = L"label24";
+			this->label24->Size = System::Drawing::Size(63, 14);
+			this->label24->TabIndex = 18;
+			this->label24->Text = L"转账金额";
+			// 
+			// textBox11
+			// 
+			this->textBox11->Location = System::Drawing::Point(87, 145);
+			this->textBox11->Name = L"textBox11";
+			this->textBox11->Size = System::Drawing::Size(142, 26);
+			this->textBox11->TabIndex = 17;
+			// 
+			// textBox10
+			// 
+			this->textBox10->Location = System::Drawing::Point(87, 113);
+			this->textBox10->Name = L"textBox10";
+			this->textBox10->ReadOnly = true;
+			this->textBox10->Size = System::Drawing::Size(142, 26);
+			this->textBox10->TabIndex = 16;
+			this->textBox10->Text = L"1023456789";
+			// 
+			// label23
+			// 
+			this->label23->AutoSize = true;
+			this->label23->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label23->Location = System::Drawing::Point(18, 118);
+			this->label23->Name = L"label23";
+			this->label23->Size = System::Drawing::Size(63, 14);
+			this->label23->TabIndex = 15;
+			this->label23->Text = L"目的账户";
+			// 
+			// textBox9
+			// 
+			this->textBox9->Location = System::Drawing::Point(87, 81);
+			this->textBox9->Name = L"textBox9";
+			this->textBox9->ReadOnly = true;
+			this->textBox9->Size = System::Drawing::Size(142, 26);
+			this->textBox9->TabIndex = 14;
+			this->textBox9->Text = L"1234567890";
+			// 
+			// label22
+			// 
+			this->label22->AutoSize = true;
+			this->label22->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label22->Location = System::Drawing::Point(19, 86);
+			this->label22->Name = L"label22";
+			this->label22->Size = System::Drawing::Size(49, 14);
+			this->label22->TabIndex = 13;
+			this->label22->Text = L"源账户";
+			// 
+			// label21
+			// 
+			this->label21->AutoSize = true;
+			this->label21->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label21->Location = System::Drawing::Point(6, 62);
+			this->label21->Name = L"label21";
+			this->label21->Size = System::Drawing::Size(56, 14);
+			this->label21->TabIndex = 12;
+			this->label21->Text = L"二 转账";
+			// 
+			// btnRSAKey
+			// 
+			this->btnRSAKey->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->btnRSAKey->Location = System::Drawing::Point(21, 27);
+			this->btnRSAKey->Name = L"btnRSAKey";
+			this->btnRSAKey->Size = System::Drawing::Size(60, 23);
+			this->btnRSAKey->TabIndex = 11;
+			this->btnRSAKey->Text = L"取公钥";
+			this->btnRSAKey->UseVisualStyleBackColor = true;
+			// 
+			// textBox8
+			// 
+			this->textBox8->Location = System::Drawing::Point(87, 24);
+			this->textBox8->Name = L"textBox8";
+			this->textBox8->ReadOnly = true;
+			this->textBox8->Size = System::Drawing::Size(237, 26);
+			this->textBox8->TabIndex = 10;
+			// 
+			// label20
+			// 
+			this->label20->AutoSize = true;
+			this->label20->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label20->Location = System::Drawing::Point(6, 5);
+			this->label20->Name = L"label20";
+			this->label20->Size = System::Drawing::Size(105, 14);
+			this->label20->TabIndex = 9;
+			this->label20->Text = L"一 生成RSA公钥";
+			// 
+			// label19
+			// 
+			this->label19->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->label19->BackColor = System::Drawing::Color::LightGray;
+			this->label19->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->label19->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label19->Location = System::Drawing::Point(332, 62);
+			this->label19->Margin = System::Windows::Forms::Padding(5);
+			this->label19->Name = L"label19";
+			this->label19->Size = System::Drawing::Size(220, 293);
+			this->label19->TabIndex = 6;
+			this->label19->Text = resources->GetString(L"label19.Text");
+			// 
 			// tabPage4
 			// 
+			this->tabPage4->Controls->Add(this->textBox13);
+			this->tabPage4->Controls->Add(this->label31);
+			this->tabPage4->Controls->Add(this->pictureBoxLogIn);
+			this->tabPage4->Controls->Add(this->textBox12);
+			this->tabPage4->Controls->Add(this->btnLogIn);
+			this->tabPage4->Controls->Add(this->label30);
+			this->tabPage4->Controls->Add(this->label29);
+			this->tabPage4->Controls->Add(this->btnDownloadCode);
+			this->tabPage4->Controls->Add(this->label28);
+			this->tabPage4->Controls->Add(this->textChallangeCode);
+			this->tabPage4->Controls->Add(this->btnGenerateChallangeCode);
+			this->tabPage4->Controls->Add(this->label27);
+			this->tabPage4->Controls->Add(this->label26);
 			this->tabPage4->Location = System::Drawing::Point(4, 25);
 			this->tabPage4->Name = L"tabPage4";
 			this->tabPage4->Padding = System::Windows::Forms::Padding(3);
@@ -457,6 +825,147 @@ namespace VisualCard {
 			this->tabPage4->TabIndex = 3;
 			this->tabPage4->Text = L"OTP";
 			this->tabPage4->UseVisualStyleBackColor = true;
+			// 
+			// textBox13
+			// 
+			this->textBox13->Location = System::Drawing::Point(50, 317);
+			this->textBox13->Name = L"textBox13";
+			this->textBox13->ReadOnly = true;
+			this->textBox13->Size = System::Drawing::Size(240, 26);
+			this->textBox13->TabIndex = 22;
+			// 
+			// label31
+			// 
+			this->label31->AutoSize = true;
+			this->label31->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label31->Location = System::Drawing::Point(7, 300);
+			this->label31->Name = L"label31";
+			this->label31->Size = System::Drawing::Size(84, 14);
+			this->label31->TabIndex = 21;
+			this->label31->Text = L"五 操作状态";
+			// 
+			// pictureBoxLogIn
+			// 
+			this->pictureBoxLogIn->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBoxLogIn.Image")));
+			this->pictureBoxLogIn->Location = System::Drawing::Point(10, 192);
+			this->pictureBoxLogIn->Name = L"pictureBoxLogIn";
+			this->pictureBoxLogIn->Size = System::Drawing::Size(302, 92);
+			this->pictureBoxLogIn->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBoxLogIn->TabIndex = 20;
+			this->pictureBoxLogIn->TabStop = false;
+			this->pictureBoxLogIn->Visible = false;
+			this->pictureBoxLogIn->Click += gcnew System::EventHandler(this, &Form1::pictureBoxLogIn_Click);
+			// 
+			// textBox12
+			// 
+			this->textBox12->Location = System::Drawing::Point(10, 160);
+			this->textBox12->Name = L"textBox12";
+			this->textBox12->Size = System::Drawing::Size(201, 26);
+			this->textBox12->TabIndex = 19;
+			// 
+			// btnLogIn
+			// 
+			this->btnLogIn->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->btnLogIn->Location = System::Drawing::Point(217, 162);
+			this->btnLogIn->Name = L"btnLogIn";
+			this->btnLogIn->Size = System::Drawing::Size(95, 23);
+			this->btnLogIn->TabIndex = 18;
+			this->btnLogIn->Text = L"登录";
+			this->btnLogIn->UseVisualStyleBackColor = true;
+			this->btnLogIn->Click += gcnew System::EventHandler(this, &Form1::btnLogIn_Click);
+			// 
+			// label30
+			// 
+			this->label30->AutoSize = true;
+			this->label30->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label30->Location = System::Drawing::Point(7, 143);
+			this->label30->Name = L"label30";
+			this->label30->Size = System::Drawing::Size(56, 14);
+			this->label30->TabIndex = 17;
+			this->label30->Text = L"四 登录";
+			// 
+			// label29
+			// 
+			this->label29->AutoSize = true;
+			this->label29->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label29->Location = System::Drawing::Point(6, 116);
+			this->label29->Name = L"label29";
+			this->label29->Size = System::Drawing::Size(98, 14);
+			this->label29->TabIndex = 16;
+			this->label29->Text = L"三 生成应答码";
+			// 
+			// btnDownloadCode
+			// 
+			this->btnDownloadCode->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->btnDownloadCode->Location = System::Drawing::Point(71, 79);
+			this->btnDownloadCode->Name = L"btnDownloadCode";
+			this->btnDownloadCode->Size = System::Drawing::Size(180, 23);
+			this->btnDownloadCode->TabIndex = 15;
+			this->btnDownloadCode->Text = L"下发挑战码";
+			this->btnDownloadCode->UseVisualStyleBackColor = true;
+			// 
+			// label28
+			// 
+			this->label28->AutoSize = true;
+			this->label28->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label28->Location = System::Drawing::Point(6, 62);
+			this->label28->Name = L"label28";
+			this->label28->Size = System::Drawing::Size(98, 14);
+			this->label28->TabIndex = 14;
+			this->label28->Text = L"二 下发挑战码";
+			// 
+			// textChallangeCode
+			// 
+			this->textChallangeCode->Location = System::Drawing::Point(111, 23);
+			this->textChallangeCode->Name = L"textChallangeCode";
+			this->textChallangeCode->ReadOnly = true;
+			this->textChallangeCode->Size = System::Drawing::Size(201, 26);
+			this->textChallangeCode->TabIndex = 13;
+			this->textChallangeCode->TextChanged += gcnew System::EventHandler(this, &Form1::textChallangeCode_TextChanged);
+			// 
+			// btnGenerateChallangeCode
+			// 
+			this->btnGenerateChallangeCode->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->btnGenerateChallangeCode->Location = System::Drawing::Point(9, 25);
+			this->btnGenerateChallangeCode->Name = L"btnGenerateChallangeCode";
+			this->btnGenerateChallangeCode->Size = System::Drawing::Size(95, 23);
+			this->btnGenerateChallangeCode->TabIndex = 12;
+			this->btnGenerateChallangeCode->Text = L"获得挑战码";
+			this->btnGenerateChallangeCode->UseVisualStyleBackColor = true;
+			this->btnGenerateChallangeCode->Click += gcnew System::EventHandler(this, &Form1::btnGenerateChallangeCode_Click);
+			// 
+			// label27
+			// 
+			this->label27->AutoSize = true;
+			this->label27->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label27->Location = System::Drawing::Point(6, 8);
+			this->label27->Name = L"label27";
+			this->label27->Size = System::Drawing::Size(98, 14);
+			this->label27->TabIndex = 10;
+			this->label27->Text = L"一 获得挑战码";
+			// 
+			// label26
+			// 
+			this->label26->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->label26->BackColor = System::Drawing::Color::LightGray;
+			this->label26->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->label26->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label26->Location = System::Drawing::Point(335, 8);
+			this->label26->Margin = System::Windows::Forms::Padding(5);
+			this->label26->Name = L"label26";
+			this->label26->Size = System::Drawing::Size(220, 347);
+			this->label26->TabIndex = 7;
+			this->label26->Text = resources->GetString(L"label26.Text");
 			// 
 			// label1
 			// 
@@ -487,48 +996,32 @@ namespace VisualCard {
 			this->splitter1->TabIndex = 3;
 			this->splitter1->TabStop = false;
 			// 
-			// textOpStatusCardTest
-			// 
-			this->textOpStatusCardTest->Location = System::Drawing::Point(84, 266);
-			this->textOpStatusCardTest->Name = L"textOpStatusCardTest";
-			this->textOpStatusCardTest->ReadOnly = true;
-			this->textOpStatusCardTest->Size = System::Drawing::Size(240, 23);
-			this->textOpStatusCardTest->TabIndex = 14;
-			// 
-			// textSW
-			// 
-			this->textSW->Location = System::Drawing::Point(84, 302);
-			this->textSW->Name = L"textSW";
-			this->textSW->ReadOnly = true;
-			this->textSW->Size = System::Drawing::Size(240, 23);
-			this->textSW->TabIndex = 15;
-			// 
 			// textBox1
 			// 
 			this->textBox1->Location = System::Drawing::Point(84, 285);
 			this->textBox1->Name = L"textBox1";
-			this->textBox1->Size = System::Drawing::Size(204, 23);
+			this->textBox1->Size = System::Drawing::Size(204, 21);
 			this->textBox1->TabIndex = 15;
 			// 
 			// textBox2
 			// 
 			this->textBox2->Location = System::Drawing::Point(84, 248);
 			this->textBox2->Name = L"textBox2";
-			this->textBox2->Size = System::Drawing::Size(205, 23);
+			this->textBox2->Size = System::Drawing::Size(205, 21);
 			this->textBox2->TabIndex = 14;
 			// 
 			// textBox3
 			// 
 			this->textBox3->Location = System::Drawing::Point(9, 126);
 			this->textBox3->Name = L"textBox3";
-			this->textBox3->Size = System::Drawing::Size(179, 23);
+			this->textBox3->Size = System::Drawing::Size(179, 21);
 			this->textBox3->TabIndex = 13;
 			// 
 			// textBox4
 			// 
 			this->textBox4->Location = System::Drawing::Point(9, 169);
 			this->textBox4->Name = L"textBox4";
-			this->textBox4->Size = System::Drawing::Size(179, 23);
+			this->textBox4->Size = System::Drawing::Size(179, 21);
 			this->textBox4->TabIndex = 12;
 			// 
 			// label8
@@ -658,289 +1151,6 @@ namespace VisualCard {
 			this->button5->Text = L"探卡";
 			this->button5->UseVisualStyleBackColor = true;
 			// 
-			// label14
-			// 
-			this->label14->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->label14->BackColor = System::Drawing::Color::LightGray;
-			this->label14->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->label14->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label14->Location = System::Drawing::Point(335, 8);
-			this->label14->Margin = System::Windows::Forms::Padding(5);
-			this->label14->Name = L"label14";
-			this->label14->Size = System::Drawing::Size(220, 350);
-			this->label14->TabIndex = 5;
-			this->label14->Text = resources->GetString(L"label14.Text");
-			// 
-			// btnBanlance
-			// 
-			this->btnBanlance->Font = (gcnew System::Drawing::Font(L"宋体", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->btnBanlance->Location = System::Drawing::Point(237, 197);
-			this->btnBanlance->Name = L"btnBanlance";
-			this->btnBanlance->Size = System::Drawing::Size(91, 23);
-			this->btnBanlance->TabIndex = 6;
-			this->btnBanlance->Text = L"查询余额";
-			this->btnBanlance->UseVisualStyleBackColor = true;
-			// 
-			// textBanlanceElecMoney
-			// 
-			this->textBanlanceElecMoney->Location = System::Drawing::Point(71, 197);
-			this->textBanlanceElecMoney->Name = L"textBanlanceElecMoney";
-			this->textBanlanceElecMoney->ReadOnly = true;
-			this->textBanlanceElecMoney->Size = System::Drawing::Size(158, 26);
-			this->textBanlanceElecMoney->TabIndex = 7;
-			this->textBanlanceElecMoney->TextChanged += gcnew System::EventHandler(this, &Form1::textBanlanceElecMoney_TextChanged);
-			// 
-			// label15
-			// 
-			this->label15->AutoSize = true;
-			this->label15->Location = System::Drawing::Point(6, 8);
-			this->label15->Name = L"label15";
-			this->label15->Size = System::Drawing::Size(64, 16);
-			this->label15->TabIndex = 8;
-			this->label15->Text = L"一 充值";
-			// 
-			// textBox6
-			// 
-			this->textBox6->Location = System::Drawing::Point(71, 37);
-			this->textBox6->Name = L"textBox6";
-			this->textBox6->Size = System::Drawing::Size(158, 26);
-			this->textBox6->TabIndex = 9;
-			// 
-			// btnCharge
-			// 
-			this->btnCharge->Location = System::Drawing::Point(238, 37);
-			this->btnCharge->Name = L"btnCharge";
-			this->btnCharge->Size = System::Drawing::Size(90, 23);
-			this->btnCharge->TabIndex = 10;
-			this->btnCharge->Text = L"充值";
-			this->btnCharge->UseVisualStyleBackColor = true;
-			// 
-			// label16
-			// 
-			this->label16->AutoSize = true;
-			this->label16->Location = System::Drawing::Point(6, 83);
-			this->label16->Name = L"label16";
-			this->label16->Size = System::Drawing::Size(64, 16);
-			this->label16->TabIndex = 11;
-			this->label16->Text = L"二 消费";
-			// 
-			// btnCounsume
-			// 
-			this->btnCounsume->Location = System::Drawing::Point(237, 115);
-			this->btnCounsume->Name = L"btnCounsume";
-			this->btnCounsume->Size = System::Drawing::Size(91, 23);
-			this->btnCounsume->TabIndex = 12;
-			this->btnCounsume->Text = L"消费";
-			this->btnCounsume->UseVisualStyleBackColor = true;
-			// 
-			// textBox7
-			// 
-			this->textBox7->Location = System::Drawing::Point(71, 115);
-			this->textBox7->Name = L"textBox7";
-			this->textBox7->Size = System::Drawing::Size(158, 26);
-			this->textBox7->TabIndex = 13;
-			// 
-			// label17
-			// 
-			this->label17->AutoSize = true;
-			this->label17->Location = System::Drawing::Point(6, 159);
-			this->label17->Name = L"label17";
-			this->label17->Size = System::Drawing::Size(96, 16);
-			this->label17->TabIndex = 14;
-			this->label17->Text = L"三 查询余额";
-			// 
-			// label18
-			// 
-			this->label18->AutoSize = true;
-			this->label18->Location = System::Drawing::Point(6, 241);
-			this->label18->Name = L"label18";
-			this->label18->Size = System::Drawing::Size(96, 16);
-			this->label18->TabIndex = 15;
-			this->label18->Text = L"四 操作状态";
-			// 
-			// textOpStatusElecMoney
-			// 
-			this->textOpStatusElecMoney->Location = System::Drawing::Point(91, 288);
-			this->textOpStatusElecMoney->Name = L"textOpStatusElecMoney";
-			this->textOpStatusElecMoney->ReadOnly = true;
-			this->textOpStatusElecMoney->Size = System::Drawing::Size(196, 26);
-			this->textOpStatusElecMoney->TabIndex = 16;
-			// 
-			// label19
-			// 
-			this->label19->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->label19->BackColor = System::Drawing::Color::LightGray;
-			this->label19->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->label19->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label19->Location = System::Drawing::Point(332, 62);
-			this->label19->Margin = System::Windows::Forms::Padding(5);
-			this->label19->Name = L"label19";
-			this->label19->Size = System::Drawing::Size(220, 293);
-			this->label19->TabIndex = 6;
-			this->label19->Text = resources->GetString(L"label19.Text");
-			// 
-			// label20
-			// 
-			this->label20->AutoSize = true;
-			this->label20->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label20->Location = System::Drawing::Point(6, 5);
-			this->label20->Name = L"label20";
-			this->label20->Size = System::Drawing::Size(105, 14);
-			this->label20->TabIndex = 9;
-			this->label20->Text = L"一 生成RSA公钥";
-			// 
-			// textBox8
-			// 
-			this->textBox8->Location = System::Drawing::Point(87, 24);
-			this->textBox8->Name = L"textBox8";
-			this->textBox8->ReadOnly = true;
-			this->textBox8->Size = System::Drawing::Size(237, 26);
-			this->textBox8->TabIndex = 10;
-			// 
-			// btnRSAKey
-			// 
-			this->btnRSAKey->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->btnRSAKey->Location = System::Drawing::Point(21, 27);
-			this->btnRSAKey->Name = L"btnRSAKey";
-			this->btnRSAKey->Size = System::Drawing::Size(60, 23);
-			this->btnRSAKey->TabIndex = 11;
-			this->btnRSAKey->Text = L"取公钥";
-			this->btnRSAKey->UseVisualStyleBackColor = true;
-			// 
-			// label21
-			// 
-			this->label21->AutoSize = true;
-			this->label21->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label21->Location = System::Drawing::Point(6, 62);
-			this->label21->Name = L"label21";
-			this->label21->Size = System::Drawing::Size(56, 14);
-			this->label21->TabIndex = 12;
-			this->label21->Text = L"二 转账";
-			// 
-			// label22
-			// 
-			this->label22->AutoSize = true;
-			this->label22->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label22->Location = System::Drawing::Point(19, 86);
-			this->label22->Name = L"label22";
-			this->label22->Size = System::Drawing::Size(49, 14);
-			this->label22->TabIndex = 13;
-			this->label22->Text = L"源账户";
-			// 
-			// textBox9
-			// 
-			this->textBox9->Location = System::Drawing::Point(87, 81);
-			this->textBox9->Name = L"textBox9";
-			this->textBox9->ReadOnly = true;
-			this->textBox9->Size = System::Drawing::Size(142, 26);
-			this->textBox9->TabIndex = 14;
-			this->textBox9->Text = L"1234567890";
-			// 
-			// label23
-			// 
-			this->label23->AutoSize = true;
-			this->label23->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label23->Location = System::Drawing::Point(18, 118);
-			this->label23->Name = L"label23";
-			this->label23->Size = System::Drawing::Size(63, 14);
-			this->label23->TabIndex = 15;
-			this->label23->Text = L"目的账户";
-			// 
-			// textBox10
-			// 
-			this->textBox10->Location = System::Drawing::Point(87, 113);
-			this->textBox10->Name = L"textBox10";
-			this->textBox10->ReadOnly = true;
-			this->textBox10->Size = System::Drawing::Size(142, 26);
-			this->textBox10->TabIndex = 16;
-			this->textBox10->Text = L"1023456789";
-			// 
-			// textBox11
-			// 
-			this->textBox11->Location = System::Drawing::Point(87, 145);
-			this->textBox11->Name = L"textBox11";
-			this->textBox11->Size = System::Drawing::Size(142, 26);
-			this->textBox11->TabIndex = 17;
-			// 
-			// label24
-			// 
-			this->label24->AutoSize = true;
-			this->label24->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label24->Location = System::Drawing::Point(19, 150);
-			this->label24->Name = L"label24";
-			this->label24->Size = System::Drawing::Size(63, 14);
-			this->label24->TabIndex = 18;
-			this->label24->Text = L"转账金额";
-			// 
-			// btnSendData
-			// 
-			this->btnSendData->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->btnSendData->Location = System::Drawing::Point(249, 102);
-			this->btnSendData->Name = L"btnSendData";
-			this->btnSendData->Size = System::Drawing::Size(75, 47);
-			this->btnSendData->TabIndex = 19;
-			this->btnSendData->Text = L"提交数据给可视卡";
-			this->btnSendData->UseVisualStyleBackColor = true;
-			// 
-			// treeView1
-			// 
-			this->treeView1->Location = System::Drawing::Point(22, 177);
-			this->treeView1->Name = L"treeView1";
-			this->treeView1->Size = System::Drawing::Size(302, 104);
-			this->treeView1->TabIndex = 20;
-			this->treeView1->Visible = false;
-			// 
-			// label25
-			// 
-			this->label25->AutoSize = true;
-			this->label25->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label25->Location = System::Drawing::Point(6, 294);
-			this->label25->Name = L"label25";
-			this->label25->Size = System::Drawing::Size(84, 14);
-			this->label25->TabIndex = 21;
-			this->label25->Text = L"三 操作状态";
-			// 
-			// textOpStatusNewUKey
-			// 
-			this->textOpStatusNewUKey->Location = System::Drawing::Point(46, 320);
-			this->textOpStatusNewUKey->Name = L"textOpStatusNewUKey";
-			this->textOpStatusNewUKey->ReadOnly = true;
-			this->textOpStatusNewUKey->Size = System::Drawing::Size(237, 26);
-			this->textOpStatusNewUKey->TabIndex = 22;
-			// 
-			// button6
-			// 
-			this->button6->Font = (gcnew System::Drawing::Font(L"宋体", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->button6->Location = System::Drawing::Point(344, 21);
-			this->button6->Name = L"button6";
-			this->button6->Size = System::Drawing::Size(91, 23);
-			this->button6->TabIndex = 23;
-			this->button6->Text = L"查询余额";
-			this->button6->UseVisualStyleBackColor = true;
-			// 
-			// textBanlanceNewUKey
-			// 
-			this->textBanlanceNewUKey->Location = System::Drawing::Point(441, 21);
-			this->textBanlanceNewUKey->Name = L"textBanlanceNewUKey";
-			this->textBanlanceNewUKey->ReadOnly = true;
-			this->textBanlanceNewUKey->Size = System::Drawing::Size(111, 26);
-			this->textBanlanceNewUKey->TabIndex = 24;
-			this->textBanlanceNewUKey->TextChanged += gcnew System::EventHandler(this, &Form1::textBanlanceNewUKey_TextChanged);
-			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
@@ -963,6 +1173,10 @@ namespace VisualCard {
 			this->tabPage2->PerformLayout();
 			this->tabPage3->ResumeLayout(false);
 			this->tabPage3->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxAuthCode))->EndInit();
+			this->tabPage4->ResumeLayout(false);
+			this->tabPage4->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxLogIn))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -975,7 +1189,7 @@ private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  
 private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
-
+			 textRandomData->Text = "12345";
 		 }
 private: System::Void textRandomData_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
@@ -987,6 +1201,37 @@ private: System::Void textBanlanceElecMoney_TextChanged(System::Object^  sender,
 		 }
 private: System::Void textBanlanceNewUKey_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
+
+private: System::Void pictureBoxAuthCode_Click(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void btnLogIn_Click(System::Object^  sender, System::EventArgs^  e) {
+			 pictureBoxLogIn->Visible = true;
+
+		 }
+private: System::Void pictureBoxLogIn_Click(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void btnGenerateChallangeCode_Click(System::Object^  sender, System::EventArgs^  e) {
+
+			 
+			 g_nChallangeCodeTimes ++;
+			 Random^ fixRandom = gcnew Random(g_nChallangeCodeTimes); 
+			 
+			 
+
+			 for(int i= 0; i < 6; i ++){
+				 g_nChallangeCode[i] = fixRandom->Next(10);
+				 
+			 }
+			 
+//			 strChallangeCode = strStream.str();
+			 textChallangeCode->Text = strChallangeCode;
+				
+
+		 }
+private: System::Void textChallangeCode_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
+
+
 };
 }
 
