@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include <sstream>
+//#include <sstream>
 
 namespace VisualCard {
 
@@ -14,7 +14,7 @@ namespace VisualCard {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	using namespace std;
+//	using namespace std;
 
 
 	/// <summary>
@@ -34,6 +34,7 @@ namespace VisualCard {
 		int g_nChallangeCodeTimes;
 		array<int^>^ g_nChallangeCode;
 		String^ strChallangeCode;
+		
 		
 	
 
@@ -1212,22 +1213,23 @@ private: System::Void pictureBoxLogIn_Click(System::Object^  sender, System::Eve
 		 }
 private: System::Void btnGenerateChallangeCode_Click(System::Object^  sender, System::EventArgs^  e) {
 
-			 
-			 g_nChallangeCodeTimes ++;
-			 Random^ fixRandom = gcnew Random(g_nChallangeCodeTimes); 
-			 
+			 char ch[20];
+			 Random^ fixRandom = gcnew Random;
 			 
 
 			 for(int i= 0; i < 6; i ++){
 				 g_nChallangeCode[i] = fixRandom->Next(10);
+				 sprintf_s(ch, "%d", *g_nChallangeCode[i]);
+				 String^ str= System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)ch); 
+				 strChallangeCode += str;
 				 
 			 }
-			 
-//			 strChallangeCode = strStream.str();
 			 textChallangeCode->Text = strChallangeCode;
+			 strChallangeCode = "";
 				
 
 		 }
+
 private: System::Void textChallangeCode_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 
