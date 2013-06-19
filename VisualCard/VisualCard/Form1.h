@@ -146,7 +146,8 @@ private: System::Windows::Forms::TextBox^  textChallangeCode;
 
 	private: System::Windows::Forms::Button^  btnGenerateChallangeCode;
 	private: System::Windows::Forms::Label^  label27;
-private: System::Windows::Forms::TextBox^  textBox13;
+private: System::Windows::Forms::TextBox^  textOPStatusOTP;
+
 private: System::Windows::Forms::Label^  label31;
 private: System::Windows::Forms::PictureBox^  pictureBoxLogIn;
 
@@ -222,7 +223,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->label20 = (gcnew System::Windows::Forms::Label());
 			this->label19 = (gcnew System::Windows::Forms::Label());
 			this->tabPage4 = (gcnew System::Windows::Forms::TabPage());
-			this->textBox13 = (gcnew System::Windows::Forms::TextBox());
+			this->textOPStatusOTP = (gcnew System::Windows::Forms::TextBox());
 			this->label31 = (gcnew System::Windows::Forms::Label());
 			this->pictureBoxLogIn = (gcnew System::Windows::Forms::PictureBox());
 			this->textBox12 = (gcnew System::Windows::Forms::TextBox());
@@ -314,6 +315,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textSW->ReadOnly = true;
 			this->textSW->Size = System::Drawing::Size(240, 23);
 			this->textSW->TabIndex = 15;
+			this->textSW->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// textOpStatusCardTest
 			// 
@@ -322,13 +324,16 @@ private: System::Windows::Forms::Label^  label29;
 			this->textOpStatusCardTest->ReadOnly = true;
 			this->textOpStatusCardTest->Size = System::Drawing::Size(240, 23);
 			this->textOpStatusCardTest->TabIndex = 14;
+			this->textOpStatusCardTest->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// textRandomData
 			// 
 			this->textRandomData->Location = System::Drawing::Point(9, 140);
 			this->textRandomData->Name = L"textRandomData";
+			this->textRandomData->ReadOnly = true;
 			this->textRandomData->Size = System::Drawing::Size(214, 23);
 			this->textRandomData->TabIndex = 13;
+			this->textRandomData->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->textRandomData->TextChanged += gcnew System::EventHandler(this, &Form1::textRandomData_TextChanged);
 			// 
 			// textWriteCard
@@ -337,6 +342,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textWriteCard->Name = L"textWriteCard";
 			this->textWriteCard->Size = System::Drawing::Size(214, 23);
 			this->textWriteCard->TabIndex = 12;
+			this->textWriteCard->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// label7
 			// 
@@ -500,6 +506,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textOpStatusElecMoney->ReadOnly = true;
 			this->textOpStatusElecMoney->Size = System::Drawing::Size(196, 26);
 			this->textOpStatusElecMoney->TabIndex = 16;
+			this->textOpStatusElecMoney->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// label18
 			// 
@@ -525,6 +532,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBox7->Name = L"textBox7";
 			this->textBox7->Size = System::Drawing::Size(158, 26);
 			this->textBox7->TabIndex = 13;
+			this->textBox7->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// btnCounsume
 			// 
@@ -559,6 +567,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBox6->Name = L"textBox6";
 			this->textBox6->Size = System::Drawing::Size(158, 26);
 			this->textBox6->TabIndex = 9;
+			this->textBox6->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// label15
 			// 
@@ -576,6 +585,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBanlanceElecMoney->ReadOnly = true;
 			this->textBanlanceElecMoney->Size = System::Drawing::Size(158, 26);
 			this->textBanlanceElecMoney->TabIndex = 7;
+			this->textBanlanceElecMoney->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->textBanlanceElecMoney->TextChanged += gcnew System::EventHandler(this, &Form1::textBanlanceElecMoney_TextChanged);
 			// 
 			// btnBanlance
@@ -647,6 +657,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBanlanceNewUKey->ReadOnly = true;
 			this->textBanlanceNewUKey->Size = System::Drawing::Size(111, 26);
 			this->textBanlanceNewUKey->TabIndex = 24;
+			this->textBanlanceNewUKey->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->textBanlanceNewUKey->TextChanged += gcnew System::EventHandler(this, &Form1::textBanlanceNewUKey_TextChanged);
 			// 
 			// button6
@@ -667,6 +678,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textOpStatusNewUKey->ReadOnly = true;
 			this->textOpStatusNewUKey->Size = System::Drawing::Size(237, 26);
 			this->textOpStatusNewUKey->TabIndex = 22;
+			this->textOpStatusNewUKey->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// label25
 			// 
@@ -707,6 +719,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBox11->Name = L"textBox11";
 			this->textBox11->Size = System::Drawing::Size(142, 26);
 			this->textBox11->TabIndex = 17;
+			this->textBox11->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// textBox10
 			// 
@@ -716,6 +729,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBox10->Size = System::Drawing::Size(142, 26);
 			this->textBox10->TabIndex = 16;
 			this->textBox10->Text = L"1023456789";
+			this->textBox10->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// label23
 			// 
@@ -736,6 +750,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBox9->Size = System::Drawing::Size(142, 26);
 			this->textBox9->TabIndex = 14;
 			this->textBox9->Text = L"1234567890";
+			this->textBox9->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// label22
 			// 
@@ -806,7 +821,7 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			// tabPage4
 			// 
-			this->tabPage4->Controls->Add(this->textBox13);
+			this->tabPage4->Controls->Add(this->textOPStatusOTP);
 			this->tabPage4->Controls->Add(this->label31);
 			this->tabPage4->Controls->Add(this->pictureBoxLogIn);
 			this->tabPage4->Controls->Add(this->textBox12);
@@ -827,13 +842,15 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage4->Text = L"OTP";
 			this->tabPage4->UseVisualStyleBackColor = true;
 			// 
-			// textBox13
+			// textOPStatusOTP
 			// 
-			this->textBox13->Location = System::Drawing::Point(50, 317);
-			this->textBox13->Name = L"textBox13";
-			this->textBox13->ReadOnly = true;
-			this->textBox13->Size = System::Drawing::Size(240, 26);
-			this->textBox13->TabIndex = 22;
+			this->textOPStatusOTP->Location = System::Drawing::Point(50, 317);
+			this->textOPStatusOTP->Name = L"textOPStatusOTP";
+			this->textOPStatusOTP->ReadOnly = true;
+			this->textOPStatusOTP->Size = System::Drawing::Size(240, 26);
+			this->textOPStatusOTP->TabIndex = 22;
+			this->textOPStatusOTP->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textOPStatusOTP->TextChanged += gcnew System::EventHandler(this, &Form1::textOPStatusOTP_TextChanged);
 			// 
 			// label31
 			// 
@@ -864,6 +881,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBox12->Name = L"textBox12";
 			this->textBox12->Size = System::Drawing::Size(201, 26);
 			this->textBox12->TabIndex = 19;
+			this->textBox12->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// btnLogIn
 			// 
@@ -928,6 +946,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textChallangeCode->ReadOnly = true;
 			this->textChallangeCode->Size = System::Drawing::Size(201, 26);
 			this->textChallangeCode->TabIndex = 13;
+			this->textChallangeCode->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->textChallangeCode->TextChanged += gcnew System::EventHandler(this, &Form1::textChallangeCode_TextChanged);
 			// 
 			// btnGenerateChallangeCode
@@ -1226,7 +1245,7 @@ private: System::Void btnGenerateChallangeCode_Click(System::Object^  sender, Sy
 			 }
 			 textChallangeCode->Text = strChallangeCode;
 			 strChallangeCode = "";
-				
+			 textOPStatusOTP->Text = "生成挑战码成功";	
 
 		 }
 
@@ -1234,6 +1253,8 @@ private: System::Void textChallangeCode_TextChanged(System::Object^  sender, Sys
 		 }
 
 
+private: System::Void textOPStatusOTP_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
 };
 }
 
