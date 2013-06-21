@@ -3,6 +3,10 @@
 #include "stdafx.h"
 #include "Form1.h"
 
+
+
+
+
 using namespace VisualCard;
 
 [STAThreadAttribute]

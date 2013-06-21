@@ -3,6 +3,17 @@
 
 #include <iostream>
 #include <string>
+
+#include <windows.h>
+
+extern "C" {    // this MUST be included
+
+// These files are in the Windows DDK
+//#include <initguid.h>
+#include "hidsdi.h"
+#include <setupapi.h>
+
+}   // extern "C"
 //#include <sstream>
 
 namespace VisualCard {
@@ -35,8 +46,11 @@ namespace VisualCard {
 		array<int^>^ g_nChallangeCode;
 		String^ strChallangeCode;
 		
-		
+		bool g_bDeviceConnected;
 	
+        
+
+		Guid g_guidStandardDeviceId;
 
 	public:
 		Form1(void)
@@ -47,8 +61,11 @@ namespace VisualCard {
 			//
 			g_nChallangeCodeTimes = 0;
 			g_nChallangeCode = gcnew array<int^>(6);
+			g_bDeviceConnected = false;
+			g_guidStandardDeviceId = Guid("{50DD5230-BA8A-11D1-BF5D-0000F805F530}");
 		}
 
+		
 	protected:
 		/// <summary>
 		/// 清理所有正在使用的资源。
@@ -1007,6 +1024,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->comboBoxDevice->Name = L"comboBoxDevice";
 			this->comboBoxDevice->Size = System::Drawing::Size(219, 20);
 			this->comboBoxDevice->TabIndex = 2;
+			this->comboBoxDevice->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::comboBoxDevice_SelectedIndexChanged);
 			// 
 			// splitter1
 			// 
@@ -1235,7 +1253,7 @@ private: System::Void btnGenerateChallangeCode_Click(System::Object^  sender, Sy
 			 char ch[20];
 			 Random^ fixRandom = gcnew Random;
 			 
-
+			 if(g_bDeviceConnected){
 			 for(int i= 0; i < 6; i ++){
 				 g_nChallangeCode[i] = fixRandom->Next(10);
 				 sprintf_s(ch, "%d", *g_nChallangeCode[i]);
@@ -1246,7 +1264,9 @@ private: System::Void btnGenerateChallangeCode_Click(System::Object^  sender, Sy
 			 textChallangeCode->Text = strChallangeCode;
 			 strChallangeCode = "";
 			 textOPStatusOTP->Text = "生成挑战码成功";	
-
+			 }else{
+				 MessageBox::Show("请先连接USB设备");
+			 }
 		 }
 
 private: System::Void textChallangeCode_TextChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -1255,6 +1275,120 @@ private: System::Void textChallangeCode_TextChanged(System::Object^  sender, Sys
 
 private: System::Void textOPStatusOTP_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
+private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+			 GUID guidHID;
+			 PSP_DEVICE_INTERFACE_DETAIL_DATA     strtDetailData = NULL;
+			 HDEVINFO hDevInfo;
+			 SP_DEVICE_INTERFACE_DATA		strtInterfaceData;
+			 HANDLE hOut = INVALID_HANDLE_VALUE;
+			 
+			 
+			 
+			 bool bSuccess = false;
+			 int index=0;
+			 DWORD predictedLength = 0;
+			 DWORD requiredLength = 0;
+
+			 if(comboBoxDevice -> SelectedItem == "HED VisualCard Adaptor-USB"){
+				 HidD_GetHidGuid(&guidHID);
+				 hDevInfo = SetupDiGetClassDevs(&guidHID, NULL, 0,
+						DIGCF_PRESENT|DIGCF_DEVICEINTERFACE );
+	
+				 if(hDevInfo != INVALID_HANDLE_VALUE){
+					 strtInterfaceData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
+					 for(int i = 0; i < 10; i++){
+						bSuccess= SetupDiEnumDeviceInterfaces(hDevInfo, NULL, &guidHID, index,
+								&strtInterfaceData);
+						if (!bSuccess){	
+								MessageBox::Show("查找USB设备出错!\r\n");
+								break;
+						}else{
+							if(strtInterfaceData.Flags == SPINT_ACTIVE ){
+								SetupDiGetDeviceInterfaceDetail (
+									hDevInfo,
+									&strtInterfaceData,
+									NULL, // probing so no output buffer yet
+									0, // probing so output buffer length of zero
+									&requiredLength,
+									NULL); // not interested in the specific dev-node
+
+
+								predictedLength = requiredLength;
+								strtDetailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA)malloc (predictedLength);
+								strtDetailData->cbSize = sizeof (SP_DEVICE_INTERFACE_DETAIL_DATA);
+
+								//
+								// Retrieve the information from Plug and Play.
+								//
+								if (!SetupDiGetDeviceInterfaceDetail (
+									hDevInfo,
+									&strtInterfaceData,
+									strtDetailData,
+									predictedLength,
+									&requiredLength,
+									NULL)) {
+										free( strtDetailData );
+										
+									}
+
+								hOut = CreateFile (
+									strtDetailData->DevicePath,
+//									GENERIC_READ | GENERIC_WRITE,
+									0,        //test for hid mouse
+									FILE_SHARE_READ | FILE_SHARE_WRITE,
+									NULL, // no SECURITY_ATTRIBUTES structure
+									OPEN_EXISTING, // No special create flags
+									0, // No special attributes
+									NULL); // No template file
+
+								if (INVALID_HANDLE_VALUE != hOut) {
+									HIDD_ATTRIBUTES strtAttrib;
+									strtAttrib.Size=sizeof(HIDD_ATTRIBUTES);
+									if (!HidD_GetAttributes(hOut,&strtAttrib)){
+										CloseHandle(hOut);
+
+										free(strtDetailData);
+									}
+
+									char ch[40];
+									sprintf_s(ch, "0x%X", strtAttrib.VendorID);
+				 String^ str= System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)ch); 
+				 
+									
+									textRandomData->Text = str;
+	
+									sprintf_s(ch, "0x%X", strtAttrib.VendorID);
+				 str= System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)ch); 
+				 
+									
+									textOpStatusCardTest->Text = str;
+	
+									
+									sprintf_s(ch, "0x%X", strtAttrib.VendorID);
+				 str= System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)ch); 
+				 
+									
+									textSW->Text = str;			}
+								free( strtDetailData );
+								
+							}
+						}
+						index++;
+
+					}
+					g_bDeviceConnected = true;
+				 }
+				 
+				 
+			 }
+		 }
+
+/*
+private: System::Void __clrcall HidD_GetHidGuid(GUID* HidGuid){
+			 __out  HidGuid;
+		 }
+*/
 };
 }
 
