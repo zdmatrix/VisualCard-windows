@@ -24,6 +24,7 @@ namespace VisualCard {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	
 
 //	using namespace std;
 
@@ -47,10 +48,9 @@ namespace VisualCard {
 		String^ strChallangeCode;
 		
 		bool g_bDeviceConnected;
-	
         
-
-		Guid g_guidStandardDeviceId;
+		
+		Guid GUID_STANDARDDEVICE_HID;
 
 	public:
 		Form1(void)
@@ -62,7 +62,7 @@ namespace VisualCard {
 			g_nChallangeCodeTimes = 0;
 			g_nChallangeCode = gcnew array<int^>(6);
 			g_bDeviceConnected = false;
-			g_guidStandardDeviceId = Guid("{50DD5230-BA8A-11D1-BF5D-0000F805F530}");
+			GUID_STANDARDDEVICE_HID = Guid("{745a17a0-74d3-11d0-b6fe-00a0c90f57da}");
 		}
 
 		
@@ -493,6 +493,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->btnProbeCard->TabIndex = 0;
 			this->btnProbeCard->Text = L"探卡";
 			this->btnProbeCard->UseVisualStyleBackColor = true;
+			this->btnProbeCard->Click += gcnew System::EventHandler(this, &Form1::btnProbeCard_Click);
 			// 
 			// tabPage2
 			// 
@@ -1276,9 +1277,13 @@ private: System::Void textChallangeCode_TextChanged(System::Object^  sender, Sys
 private: System::Void textOPStatusOTP_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-
+			 
+			 HANDLE	hDevice;
+             			 
+			 
+/*			 
 			 GUID guidHID;
-			 PSP_DEVICE_INTERFACE_DETAIL_DATA     strtDetailData = NULL;
+			 PSP_DEVICE_INTERFACE_DETAIL_DATA     strtDetailData;
 			 HDEVINFO hDevInfo;
 			 SP_DEVICE_INTERFACE_DATA		strtInterfaceData;
 			 HANDLE hOut = INVALID_HANDLE_VALUE;
@@ -1289,8 +1294,15 @@ private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sende
 			 int index=0;
 			 DWORD predictedLength = 0;
 			 DWORD requiredLength = 0;
-
+*/
 			 if(comboBoxDevice -> SelectedItem == "HED VisualCard Adaptor-USB"){
+				if(bOpenHidDevice(&hDevice, 0x1677, 0x0340)){
+					MessageBox::Show("查找USB设备成功!\r\n");
+					g_bDeviceConnected = true;
+//					bWriteToHIDDevice(detailData);
+				}
+			 }				 
+/*				 
 				 HidD_GetHidGuid(&guidHID);
 				 hDevInfo = SetupDiGetClassDevs(&guidHID, NULL, 0,
 						DIGCF_PRESENT|DIGCF_DEVICEINTERFACE );
@@ -1301,8 +1313,15 @@ private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sende
 						bSuccess= SetupDiEnumDeviceInterfaces(hDevInfo, NULL, &guidHID, index,
 								&strtInterfaceData);
 						if (!bSuccess){	
+								DWORD err = GetLastError();
+								if(err == 0x103){
+									g_bDeviceConnected = false;
+									MessageBox::Show("USB设备查找完毕!\r\n没有发现转接器，请连接转接器!\r\n");
+									break;
+								}else{
 								MessageBox::Show("查找USB设备出错!\r\n");
 								break;
+								}
 						}else{
 							if(strtInterfaceData.Flags == SPINT_ACTIVE ){
 								SetupDiGetDeviceInterfaceDetail (
@@ -1334,8 +1353,8 @@ private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sende
 
 								hOut = CreateFile (
 									strtDetailData->DevicePath,
-//									GENERIC_READ | GENERIC_WRITE,
-									0,        //test for hid mouse
+									GENERIC_READ | GENERIC_WRITE,
+//									0,        //test for hid mouse
 									FILE_SHARE_READ | FILE_SHARE_WRITE,
 									NULL, // no SECURITY_ATTRIBUTES structure
 									OPEN_EXISTING, // No special create flags
@@ -1350,7 +1369,8 @@ private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sende
 
 										free(strtDetailData);
 									}
-
+									String^ str1 = System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)strtDetailData->DevicePath);
+									MessageBox::Show(str1);
 									char ch[40];
 									sprintf_s(ch, "0x%X", strtAttrib.VendorID);
 				 String^ str= System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)ch); 
@@ -1382,13 +1402,280 @@ private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sende
 				 
 				 
 			 }
+*/
+		}
+
+
+bool bOpenHidDevice(HANDLE *HidDevHandle, USHORT VID, USHORT PID){
+//			static GUID HidGuid = GUID("{745a17a0-74d3-11d0-b6fe-00a0c90f57da}");
+			static GUID HidGuid = { 0x4D1E55B2, 0xF16F, 0x11CF, { 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 } };						/* HID Globally Unique ID: windows supplies us with this value */
+			HDEVINFO HidDevInfo;						/* handle to structure containing all attached HID Device information */
+			SP_DEVICE_INTERFACE_DATA devInfoData;		/* Information structure for HID devices */
+			BOOLEAN Result;								/* result of getting next device information structure */
+			DWORD Index;								/* index of HidDevInfo array entry */
+			DWORD DataSize;								/* size of the DeviceInterfaceDetail structure */		
+			BOOLEAN GotRequiredSize;					/* 1-shot got device info data structure size flag */
+			PSP_DEVICE_INTERFACE_DETAIL_DATA detailData;/* device info data */
+			DWORD RequiredSize;							/* size of device info data structure */
+			BOOLEAN DIDResult;							/* get device info data result */
+			HIDD_ATTRIBUTES HIDAttrib;					/* HID device attributes */
+			
+			HANDLE hDev;
+				/* initialize variables */
+				GotRequiredSize = FALSE;
+
+
+
+				/* 1) Get the HID Globally Unique ID from the OS */
+//				HidD_GetHidGuid(&HidGuid);
+
+
+				/* 2) Get an array of structures containing information about
+				all attached and enumerated HIDs */
+				HidDevInfo = SetupDiGetClassDevs(	&HidGuid, 
+													NULL, 
+													NULL, 
+													DIGCF_PRESENT | DIGCF_INTERFACEDEVICE);
+//													DIGCF_INTERFACEDEVICE);
+
+				/* 3) Step through the attached device list 1 by 1 and examine
+				each of the attached devices.  When there are no more entries in
+				the array of structures, the function will return FALSE. */
+				
+				Index = 0;									/* init to first index of array */
+				devInfoData.cbSize = sizeof(devInfoData);	/* set to the size of the structure
+															that will contain the device info data */
+				
+				do {
+					/* Get information about the HID device with the 'Index' array entry */
+					Result = SetupDiEnumDeviceInterfaces(	HidDevInfo, 
+															0, 
+															&HidGuid, 
+															Index, 
+															&devInfoData);
+					
+					/* If we run into this condition, then there are no more entries
+					to examine, we might as well return FALSE at point */
+					if(Result == FALSE)
+					{
+						/* free the memory allocated for DetailData */
+						if(detailData != NULL)
+							free(detailData);
+						
+						/* free HID device info list resources */
+						SetupDiDestroyDeviceInfoList(HidDevInfo);
+						
+						return FALSE;
+					}
+
+
+					if(GotRequiredSize == FALSE)
+					{
+						/* 3) Get the size of the DEVICE_INTERFACE_DETAIL_DATA
+						structure.  The first call will return an error condition, 
+						but we'll get the size of the strucure */
+						DIDResult = SetupDiGetDeviceInterfaceDetail(	HidDevInfo,
+																	&devInfoData,
+																	NULL,
+																	0,
+																	&DataSize,
+																	NULL);
+						GotRequiredSize = TRUE;
+
+						/* allocate memory for the HidDevInfo structure */
+						detailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA) malloc(DataSize);
+						
+						/* set the size parameter of the structure */
+						detailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
+					}
+							
+						
+					/* 4) Now call the function with the correct size parameter.  This 
+					function will return data from one of the array members that 
+					Step #2 pointed to.  This way we can start to identify the
+					attributes of particular HID devices.  */
+					DIDResult = SetupDiGetDeviceInterfaceDetail(	HidDevInfo,
+																&devInfoData,
+																detailData,
+																DataSize,
+																&RequiredSize,
+																NULL);
+						
+
+					/* 5) Open a file handle to the device.  Make sure the
+					attibutes specify overlapped transactions or the IN
+					transaction may block the input thread. */
+					*HidDevHandle = CreateFile( detailData->DevicePath,
+//												GENERIC_READ | GENERIC_WRITE,
+												0,
+												FILE_SHARE_READ | FILE_SHARE_WRITE,
+												(LPSECURITY_ATTRIBUTES)NULL,
+												OPEN_EXISTING,
+//												FILE_FLAG_OVERLAPPED,
+												NULL,
+												NULL);
+
+						
+					/* 6) Get the Device VID & PID to see if it's the device we want */
+					if(HidDevHandle != INVALID_HANDLE_VALUE)
+					{
+						HIDAttrib.Size = sizeof(HIDAttrib);
+						HidD_GetAttributes(	*HidDevHandle, &HIDAttrib);
+
+						if((HIDAttrib.VendorID == VID) && (HIDAttrib.ProductID == PID))
+						{		
+							hDev = CreateFile( detailData->DevicePath,
+												GENERIC_WRITE,
+												FILE_SHARE_READ | FILE_SHARE_WRITE,
+												(LPSECURITY_ATTRIBUTES)NULL,
+												OPEN_EXISTING,
+												0,
+												NULL);
+							if(hDev == INVALID_HANDLE_VALUE){
+								DWORD err = GetLastError();
+							}else{
+								HIDP_CAPS		Capabilities;
+								PHIDP_PREPARSED_DATA		HidParsedData;
+								OVERLAPPED		HidOverlapped;
+								HANDLE			ReportEvent;
+								unsigned char   outbuffer[33];
+								DWORD numBytesReturned;
+
+
+								outbuffer[0] = 0x05;	/* this is used as the report ID */
+								outbuffer[1] = 0x07;	/* this flag turns on the LED */
+								outbuffer[2] = 0x11;
+								outbuffer[3] = 0x22;
+								outbuffer[4] = 0x33;
+								outbuffer[5] = 0x44;
+								outbuffer[6] = 0x55;
+
+								HidD_GetPreparsedData(hDev, &HidParsedData);
+		
+								/* extract the capabilities info */
+								HidP_GetCaps( HidParsedData ,&Capabilities);
+		
+								/* Free the memory allocated when getting the preparsed data */
+								HidD_FreePreparsedData(HidParsedData);
+
+								if(!WriteFile(hDev, 
+									outbuffer, 
+									Capabilities.OutputReportByteLength, 
+									&numBytesReturned, 
+									NULL)){
+									DWORD err = GetLastError();
+								}
+			
+							}
+							/* free the memory allocated for DetailData */
+//							if(detailData != NULL)
+//								free(detailData);
+							
+							/* free HID device info list resources */
+							SetupDiDestroyDeviceInfoList(HidDevInfo);
+
+							return TRUE;	/* found HID device */
+						}
+						
+						/* 7) Close the Device Handle because we didn't find the device
+						with the correct VID and PID */
+						CloseHandle(*HidDevHandle);
+					}
+
+					Index++;	/* increment the array index to search the next entry */
+
+				} while(Result == TRUE);
+
+	/* free the memory allocated for DetailData */
+	if(detailData != NULL)
+		free(detailData);
+
+	/* free HID device info list resources */
+	SetupDiDestroyDeviceInfoList(HidDevInfo);
+
+	return FALSE;
 		 }
 
+
+
+private: System::Void btnProbeCard_Click(System::Object^  sender, System::EventArgs^  e) {
 /*
-private: System::Void __clrcall HidD_GetHidGuid(GUID* HidGuid){
-			 __out  HidGuid;
-		 }
+			 if(!g_bDeviceConnected){
+				 MessageBox::Show("USB设备未连接，请先连接!\r\n");
+			 }else{
+				 if(bWriteToHIDDevice(&hDevice)){
+					MessageBox::Show("发送成功!\r\n");
+				 }
+			 }
 */
+		}
+
+bool bWriteToHIDDevice(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData){
+			
+			unsigned long	numBytesReturned;
+			unsigned char	inbuffer[33];		/* input buffer*/
+			unsigned char   outbuffer[33];		/* output buffer */
+			HIDP_CAPS		Capabilities;
+			PHIDP_PREPARSED_DATA		HidParsedData;
+			OVERLAPPED		HidOverlapped;
+			HANDLE			ReportEvent;
+			bool ret;
+			bool bResult;
+			HANDLE hDev;
+
+			hDev = CreateFile(
+				detailData->DevicePath,
+				GENERIC_WRITE,
+				FILE_SHARE_READ | FILE_SHARE_WRITE,
+				(LPSECURITY_ATTRIBUTES)NULL,
+				OPEN_EXISTING,
+				0,
+				NULL);
+			if(hDev == INVALID_HANDLE_VALUE){
+				DWORD err = GetLastError();
+			}
+				
+			HidD_GetPreparsedData(hDev, &HidParsedData);
+		
+			/* extract the capabilities info */
+			HidP_GetCaps( HidParsedData ,&Capabilities);
+		
+			/* Free the memory allocated when getting the preparsed data */
+			HidD_FreePreparsedData(HidParsedData);		
+		
+			/* Create a new event for report capture */
+//			ReportEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+			/* fill the HidOverlapped structure so that Windows knows which
+			event to cause when the device sends an IN report */
+//			HidOverlapped.hEvent = ReportEvent;
+//			HidOverlapped.Offset = 0;
+//			HidOverlapped.OffsetHigh = 0;
+
+			/* Use WriteFile to send an output report to the HID device.  In this
+			case we are turning on the READY LED on the target */
+			outbuffer[0] = 0x05;	/* this is used as the report ID */
+			outbuffer[1] = 0x07;	/* this flag turns on the LED */
+			outbuffer[2] = 0x11;
+			outbuffer[3] = 0x22;
+			outbuffer[4] = 0x33;
+			outbuffer[5] = 0x44;
+			outbuffer[6] = 0x55;
+
+			bResult = WriteFile(hDev, 
+								outbuffer, 
+								Capabilities.OutputReportByteLength, 
+								&numBytesReturned, 
+//								(LPOVERLAPPED) &HidOverlapped
+								NULL);
+			if(bResult){
+				ret = true;
+			}else{
+				DWORD err = GetLastError();
+				ret = false;
+			}
+			return ret;
+		 }
 };
 }
 
