@@ -6,6 +6,7 @@
 
 #include <windows.h>
 
+
 extern "C" {    // this MUST be included
 
 // These files are in the Windows DDK
@@ -24,8 +25,8 @@ namespace VisualCard {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-	
 
+	
 //	using namespace std;
 
 
@@ -48,7 +49,10 @@ namespace VisualCard {
 		String^ strChallangeCode;
 		
 		bool g_bDeviceConnected;
-        
+	private: System::Windows::Forms::Label^  label7;
+	private: System::Windows::Forms::Label^  label17;
+	public: 
+
 		
 		Guid GUID_STANDARDDEVICE_HID;
 
@@ -92,7 +96,7 @@ namespace VisualCard {
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::Label^  label4;
 
-	private: System::Windows::Forms::Label^  label7;
+
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::Button^  btnWriteCard;
@@ -131,7 +135,7 @@ namespace VisualCard {
 	private: System::Windows::Forms::Label^  label16;
 	private: System::Windows::Forms::TextBox^  textOpStatusElecMoney;
 	private: System::Windows::Forms::Label^  label18;
-	private: System::Windows::Forms::Label^  label17;
+
 	private: System::Windows::Forms::TextBox^  textBox7;
 	private: System::Windows::Forms::Button^  btnRSAKey;
 	private: System::Windows::Forms::TextBox^  textBox8;
@@ -197,7 +201,6 @@ private: System::Windows::Forms::Label^  label29;
 			this->textOpStatusCardTest = (gcnew System::Windows::Forms::TextBox());
 			this->textRandomData = (gcnew System::Windows::Forms::TextBox());
 			this->textWriteCard = (gcnew System::Windows::Forms::TextBox());
-			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->btnWriteCard = (gcnew System::Windows::Forms::Button());
@@ -211,7 +214,6 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
 			this->textOpStatusElecMoney = (gcnew System::Windows::Forms::TextBox());
 			this->label18 = (gcnew System::Windows::Forms::Label());
-			this->label17 = (gcnew System::Windows::Forms::Label());
 			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
 			this->btnCounsume = (gcnew System::Windows::Forms::Button());
 			this->label16 = (gcnew System::Windows::Forms::Label());
@@ -271,6 +273,8 @@ private: System::Windows::Forms::Label^  label29;
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->button5 = (gcnew System::Windows::Forms::Button());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->label17 = (gcnew System::Windows::Forms::Label());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
@@ -301,11 +305,11 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			this->tabPage1->BackColor = System::Drawing::Color::Transparent;
 			this->tabPage1->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->tabPage1->Controls->Add(this->label7);
 			this->tabPage1->Controls->Add(this->textSW);
 			this->tabPage1->Controls->Add(this->textOpStatusCardTest);
 			this->tabPage1->Controls->Add(this->textRandomData);
 			this->tabPage1->Controls->Add(this->textWriteCard);
-			this->tabPage1->Controls->Add(this->label7);
 			this->tabPage1->Controls->Add(this->label6);
 			this->tabPage1->Controls->Add(this->label5);
 			this->tabPage1->Controls->Add(this->btnWriteCard);
@@ -360,16 +364,6 @@ private: System::Windows::Forms::Label^  label29;
 			this->textWriteCard->Size = System::Drawing::Size(214, 23);
 			this->textWriteCard->TabIndex = 12;
 			this->textWriteCard->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			// 
-			// label7
-			// 
-			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(15, 305);
-			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(49, 14);
-			this->label7->TabIndex = 10;
-			this->label7->Text = L"返回SW";
-			this->label7->Click += gcnew System::EventHandler(this, &Form1::label7_Click);
 			// 
 			// label6
 			// 
@@ -497,9 +491,9 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			// tabPage2
 			// 
+			this->tabPage2->Controls->Add(this->label17);
 			this->tabPage2->Controls->Add(this->textOpStatusElecMoney);
 			this->tabPage2->Controls->Add(this->label18);
-			this->tabPage2->Controls->Add(this->label17);
 			this->tabPage2->Controls->Add(this->textBox7);
 			this->tabPage2->Controls->Add(this->btnCounsume);
 			this->tabPage2->Controls->Add(this->label16);
@@ -534,15 +528,6 @@ private: System::Windows::Forms::Label^  label29;
 			this->label18->Size = System::Drawing::Size(96, 16);
 			this->label18->TabIndex = 15;
 			this->label18->Text = L"四 操作状态";
-			// 
-			// label17
-			// 
-			this->label17->AutoSize = true;
-			this->label17->Location = System::Drawing::Point(6, 159);
-			this->label17->Name = L"label17";
-			this->label17->Size = System::Drawing::Size(96, 16);
-			this->label17->TabIndex = 14;
-			this->label17->Text = L"三 查询余额";
 			// 
 			// textBox7
 			// 
@@ -634,6 +619,7 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			// tabPage3
 			// 
+			this->tabPage3->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->tabPage3->Controls->Add(this->pictureBoxAuthCode);
 			this->tabPage3->Controls->Add(this->textBanlanceNewUKey);
 			this->tabPage3->Controls->Add(this->button6);
@@ -1190,11 +1176,30 @@ private: System::Windows::Forms::Label^  label29;
 			this->button5->Text = L"探卡";
 			this->button5->UseVisualStyleBackColor = true;
 			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(15, 305);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(49, 14);
+			this->label7->TabIndex = 16;
+			this->label7->Text = L"返回SW";
+			// 
+			// label17
+			// 
+			this->label17->AutoSize = true;
+			this->label17->Location = System::Drawing::Point(6, 158);
+			this->label17->Name = L"label17";
+			this->label17->Size = System::Drawing::Size(96, 16);
+			this->label17->TabIndex = 17;
+			this->label17->Text = L"三 查询余额";
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::GradientInactiveCaption;
+			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(592, 446);
 			this->Controls->Add(this->splitter1);
 			this->Controls->Add(this->comboBoxDevice);
@@ -1234,8 +1239,7 @@ private: System::Void textRandomData_TextChanged(System::Object^  sender, System
 		 }
 private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
-private: System::Void label7_Click(System::Object^  sender, System::EventArgs^  e) {
-		 }
+
 private: System::Void textBanlanceElecMoney_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void textBanlanceNewUKey_TextChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -1296,7 +1300,8 @@ private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sende
 			 DWORD requiredLength = 0;
 */
 			 if(comboBoxDevice -> SelectedItem == "HED VisualCard Adaptor-USB"){
-				if(bOpenHidDevice(&hDevice, 0x1677, 0x0340)){
+//				if(bOpenHidDevice(&hDevice, 0x1677, 0x0340)){
+				 if(bOpenHidDevice(&hDevice, 0x1677, 0x0340)){		//use hid mouse for test
 					MessageBox::Show("查找USB设备成功!\r\n");
 					g_bDeviceConnected = true;
 //					bWriteToHIDDevice(detailData);
@@ -1407,15 +1412,15 @@ private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sende
 
 
 bool bOpenHidDevice(HANDLE *HidDevHandle, USHORT VID, USHORT PID){
-//			static GUID HidGuid = GUID("{745a17a0-74d3-11d0-b6fe-00a0c90f57da}");
-			static GUID HidGuid = { 0x4D1E55B2, 0xF16F, 0x11CF, { 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 } };						/* HID Globally Unique ID: windows supplies us with this value */
+//			static GUID HidGuid = { 0x4D1E55B2, 0xF16F, 0x11CF, { 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 } };						/* HID Globally Unique ID: windows supplies us with this value */
+			GUID HidGuid;
 			HDEVINFO HidDevInfo;						/* handle to structure containing all attached HID Device information */
 			SP_DEVICE_INTERFACE_DATA devInfoData;		/* Information structure for HID devices */
 			BOOLEAN Result;								/* result of getting next device information structure */
 			DWORD Index;								/* index of HidDevInfo array entry */
 			DWORD DataSize;								/* size of the DeviceInterfaceDetail structure */		
 			BOOLEAN GotRequiredSize;					/* 1-shot got device info data structure size flag */
-			PSP_DEVICE_INTERFACE_DETAIL_DATA detailData;/* device info data */
+			PSP_DEVICE_INTERFACE_DETAIL_DATA detailData = NULL;/* device info data */
 			DWORD RequiredSize;							/* size of device info data structure */
 			BOOLEAN DIDResult;							/* get device info data result */
 			HIDD_ATTRIBUTES HIDAttrib;					/* HID device attributes */
@@ -1427,12 +1432,13 @@ bool bOpenHidDevice(HANDLE *HidDevHandle, USHORT VID, USHORT PID){
 
 
 				/* 1) Get the HID Globally Unique ID from the OS */
-//				HidD_GetHidGuid(&HidGuid);
+				HidD_GetHidGuid(&HidGuid);
 
 
 				/* 2) Get an array of structures containing information about
 				all attached and enumerated HIDs */
-				HidDevInfo = SetupDiGetClassDevs(	&HidGuid, 
+				HidDevInfo = SetupDiGetClassDevs(	
+													&HidGuid,
 													NULL, 
 													NULL, 
 													DIGCF_PRESENT | DIGCF_INTERFACEDEVICE);
@@ -1450,7 +1456,7 @@ bool bOpenHidDevice(HANDLE *HidDevHandle, USHORT VID, USHORT PID){
 					/* Get information about the HID device with the 'Index' array entry */
 					Result = SetupDiEnumDeviceInterfaces(	HidDevInfo, 
 															0, 
-															&HidGuid, 
+															&HidGuid,
 															Index, 
 															&devInfoData);
 					
@@ -1484,7 +1490,7 @@ bool bOpenHidDevice(HANDLE *HidDevHandle, USHORT VID, USHORT PID){
 
 						/* allocate memory for the HidDevInfo structure */
 						detailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA) malloc(DataSize);
-						
+																	
 						/* set the size parameter of the structure */
 						detailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
 					}
@@ -1505,6 +1511,7 @@ bool bOpenHidDevice(HANDLE *HidDevHandle, USHORT VID, USHORT PID){
 					/* 5) Open a file handle to the device.  Make sure the
 					attibutes specify overlapped transactions or the IN
 					transaction may block the input thread. */
+
 					*HidDevHandle = CreateFile( detailData->DevicePath,
 //												GENERIC_READ | GENERIC_WRITE,
 												0,
@@ -1520,52 +1527,69 @@ bool bOpenHidDevice(HANDLE *HidDevHandle, USHORT VID, USHORT PID){
 					if(HidDevHandle != INVALID_HANDLE_VALUE)
 					{
 						HIDAttrib.Size = sizeof(HIDAttrib);
-						HidD_GetAttributes(	*HidDevHandle, &HIDAttrib);
-
+						HidD_GetAttributes(	*HidDevHandle, &HIDAttrib);						
 						if((HIDAttrib.VendorID == VID) && (HIDAttrib.ProductID == PID))
 						{		
-							hDev = CreateFile( detailData->DevicePath,
+							String^ str = System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)detailData->DevicePath);
+//							MessageBox::Show(str);
+							hDev = CreateFile( 
+												detailData->DevicePath,
 												GENERIC_WRITE,
 												FILE_SHARE_READ | FILE_SHARE_WRITE,
 												(LPSECURITY_ATTRIBUTES)NULL,
 												OPEN_EXISTING,
-												0,
+												0,						//for write
+//												FILE_FLAG_OVERLAPPED,   //for read
 												NULL);
+							
 							if(hDev == INVALID_HANDLE_VALUE){
 								DWORD err = GetLastError();
 							}else{
+
 								HIDP_CAPS		Capabilities;
 								PHIDP_PREPARSED_DATA		HidParsedData;
 								OVERLAPPED		HidOverlapped;
 								HANDLE			ReportEvent;
-								unsigned char   outbuffer[33];
+								unsigned char*	outbuffer;
+								unsigned char   inbuffer[33] = {0};
 								DWORD numBytesReturned;
-
-
-								outbuffer[0] = 0x05;	/* this is used as the report ID */
-								outbuffer[1] = 0x07;	/* this flag turns on the LED */
+								
+								outbuffer = (unsigned char*)malloc(0x7);
+								outbuffer[0] = 0x05;	
+								outbuffer[1] = 0x07;	
 								outbuffer[2] = 0x11;
 								outbuffer[3] = 0x22;
 								outbuffer[4] = 0x33;
 								outbuffer[5] = 0x44;
 								outbuffer[6] = 0x55;
-
-								HidD_GetPreparsedData(hDev, &HidParsedData);
+								
+//								HidD_GetPreparsedData(hDev, &HidParsedData);
 		
 								/* extract the capabilities info */
-								HidP_GetCaps( HidParsedData ,&Capabilities);
+//								HidP_GetCaps( HidParsedData ,&Capabilities);
 		
 								/* Free the memory allocated when getting the preparsed data */
-								HidD_FreePreparsedData(HidParsedData);
+//								HidD_FreePreparsedData(HidParsedData);
 
+								
 								if(!WriteFile(hDev, 
 									outbuffer, 
-									Capabilities.OutputReportByteLength, 
+//									Capabilities.OutputReportByteLength,
+									0x10,
 									&numBytesReturned, 
 									NULL)){
 									DWORD err = GetLastError();
 								}
-			
+
+/*
+								if(!ReadFile(hDev, 
+									inbuffer, 
+									Capabilities.InputReportByteLength, 
+									&numBytesReturned, 
+									NULL)){
+									DWORD err = GetLastError();
+								}
+*/
 							}
 							/* free the memory allocated for DetailData */
 //							if(detailData != NULL)
@@ -1676,6 +1700,8 @@ bool bWriteToHIDDevice(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData){
 			}
 			return ret;
 		 }
+
+
 };
 }
 
