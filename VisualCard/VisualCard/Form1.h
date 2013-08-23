@@ -17,6 +17,7 @@ extern "C" {    // this MUST be included
 }   // extern "C"
 //#include <sstream>
 
+
 namespace VisualCard {
 
 	using namespace System;
@@ -26,8 +27,7 @@ namespace VisualCard {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	
-//	using namespace std;
+	using namespace std;
 
 
 	/// <summary>
@@ -45,20 +45,30 @@ namespace VisualCard {
 	public:
 
 		int g_nChallangeCodeTimes;
+		
 		array<int^>^ g_nChallangeCode;
+		
+		
 		String^ strChallangeCode;
 		
 		bool g_bDeviceConnected;
-	private: System::Windows::Forms::Label^  label7;
-	private: System::Windows::Forms::Label^  label17;
+		
+		private: System::Windows::Forms::Label^  label7;
+		private: System::Windows::Forms::Label^  label17;
+	
+//		LPCWCH APDUGETRANDOM;
+		array<byte^>^ g_byCmdFrame;
+		array<byte^>^ g_byAPDUDataBody;
+
 	public: 
 
-		
-//		Guid GUID_STANDARDDEVICE_HID;
 		PSP_DEVICE_INTERFACE_DETAIL_DATA detailData;
 
-		HANDLE hWriteHandle;
-		HANDLE hReadHandle;
+		PHANDLE pWriteHandle;
+		PHANDLE pReadHandle;
+
+		
+//		LPCWCH	lpcAPDUGetRandom;
 
 	public:
 		Form1(void)
@@ -70,9 +80,14 @@ namespace VisualCard {
 			g_nChallangeCodeTimes = 0;
 			g_nChallangeCode = gcnew array<int^>(6);
 			g_bDeviceConnected = false;
-//			GUID_STANDARDDEVICE_HID = Guid("{745a17a0-74d3-11d0-b6fe-00a0c90f57da}");
 			detailData = NULL;
+			pWriteHandle = NULL;
+			pReadHandle = NULL;
+			
+			g_byCmdFrame = gcnew array<byte^>(8);
+//			APDUGETRANDOM = "0084000008"; 
 		}
+
 
 		
 	protected:
@@ -1238,8 +1253,32 @@ private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  
 private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
+//			 LPCWCH	lpcAPDUGetRandom = "0084000008";
+			 CHAR cAPDUCmd[] = "0084000008"; 
+			 CHAR cTmp[20];
+			 BYTE bTmp = 0;
+			 int j = 0;
+			 LPBYTE lpCmdFrame = (LPBYTE)malloc(sizeof(LPBYTE));
 			 if(g_bDeviceConnected){
-			 
+				 for(int i = 0; i < 10; i ++){
+					 
+					sprintf_s(cTmp, "%c", cAPDUCmd[i]);
+					if(i % 2){
+						bTmp |= (cTmp[0] & 0x0f);
+						*(lpCmdFrame + (i / 2 + 3)) = bTmp;
+						bTmp = 0;
+					}else{
+						
+						bTmp |= ((cTmp[0] << 4) & 0xf0);
+					}
+ 
+				 }
+
+				 *lpCmdFrame = (BYTE)0x00;       //报告ID，必须为0
+				 *(lpCmdFrame + 1) = (BYTE)0x04;		//指令类型码，04为APDU指令处理
+				 *(lpCmdFrame + 2) = (BYTE)0x05;		//下发数据长度
+
+				 bWriteToHIDDevice(pWriteHandle, lpCmdFrame);
 			 }
 			 else{
 				MessageBox::Show("请先连接USB设备");
@@ -1292,22 +1331,109 @@ private: System::Void textChallangeCode_TextChanged(System::Object^  sender, Sys
 private: System::Void textOPStatusOTP_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			 HANDLE	hDevice;
+			 
 			 if(comboBoxDevice -> SelectedItem == "HED VisualCard Adaptor-USB"){
 	
 				 if(bOpenHidDevice(0x1677, 0x0340)){
 					g_bDeviceConnected = true;
-					MessageBox::Show("查找USB设备成功!\r\n");
+					pWriteHandle = (PHANDLE)malloc(sizeof(HANDLE));
+					pReadHandle = (PHANDLE)malloc(sizeof(HANDLE));
+					if(bInitWriteHandle(detailData, pWriteHandle) && bInitReadHandle(detailData, pReadHandle)){	 
+						MessageBox::Show("查找USB设备成功!\r\n初始化Write句柄成功!\r\n初始化Read句柄成功!\r\n");	
+					}
 					
-				}
+					
+				 }else{
+						MessageBox::Show("找不到指定USB设备!\r\n请检查是否插入USB设备！\r\n");
+				 }
 			 }				 
 
 		}
 
 
-//bool bOpenHidDevice(HANDLE *HidDevHandle, USHORT VID, USHORT PID){
+bool bInitWriteHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pWriteHandle){
+	 
+	*pWriteHandle = CreateFile( 
+						detailData->DevicePath,
+						GENERIC_WRITE,
+						FILE_SHARE_READ | FILE_SHARE_WRITE,
+						(LPSECURITY_ATTRIBUTES)NULL,
+						OPEN_EXISTING,
+						0,						//for write
+						NULL);
+							
+	if(*pWriteHandle != INVALID_HANDLE_VALUE){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+bool bInitReadHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pReadHandle){
+	 
+	*pReadHandle = CreateFile( 
+						detailData->DevicePath,
+						GENERIC_READ,
+						FILE_SHARE_READ | FILE_SHARE_WRITE,
+						(LPSECURITY_ATTRIBUTES)NULL,
+						OPEN_EXISTING,
+						FILE_FLAG_OVERLAPPED,						//for read
+						NULL);
+							
+	if(*pReadHandle != INVALID_HANDLE_VALUE){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+
+bool bWriteToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
+			
+			DWORD			numBytesReturned;
+			HIDP_CAPS		Capabilities;
+			PHIDP_PREPARSED_DATA		HidParsedData;
+			
+			bool bResult;
+			
+			if(*pWriteHandle != NULL){
+				HidD_GetPreparsedData(*pWriteHandle, &HidParsedData);
+		
+				/* extract the capabilities info */
+				HidP_GetCaps( HidParsedData ,&Capabilities);
+		
+				/* Free the memory allocated when getting the preparsed data */
+				HidD_FreePreparsedData(HidParsedData);
+				
+				bResult = WriteFile(*pWriteHandle, 
+								lpWriteBuff, 
+								Capabilities.OutputReportByteLength, 
+								&numBytesReturned,
+								NULL);
+				
+				return bResult;
+			}
+				
+
+
+		
+			/* Create a new event for report capture */
+//			ReportEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+			/* fill the HidOverlapped structure so that Windows knows which
+			event to cause when the device sends an IN report */
+//			HidOverlapped.hEvent = ReportEvent;
+//			HidOverlapped.Offset = 0;
+//			HidOverlapped.OffsetHigh = 0;
+
+			/* Use WriteFile to send an output report to the HID device.  In this
+			case we are turning on the READY LED on the target */
+			
+
+			
+	}
+
 bool bOpenHidDevice(USHORT VID, USHORT PID){
-//			static GUID HidGuid = { 0x4D1E55B2, 0xF16F, 0x11CF, { 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 } };						/* HID Globally Unique ID: windows supplies us with this value */
 			GUID HidGuid;
 			HDEVINFO HidDevInfo;						/* handle to structure containing all attached HID Device information */
 			SP_DEVICE_INTERFACE_DATA devInfoData;		/* Information structure for HID devices */
@@ -1315,7 +1441,6 @@ bool bOpenHidDevice(USHORT VID, USHORT PID){
 			DWORD Index;								/* index of HidDevInfo array entry */
 			DWORD DataSize;								/* size of the DeviceInterfaceDetail structure */		
 			BOOLEAN GotRequiredSize;					/* 1-shot got device info data structure size flag */
-//			PSP_DEVICE_INTERFACE_DETAIL_DATA detailData = NULL;/* device info data */
 			DWORD RequiredSize;							/* size of device info data structure */
 			BOOLEAN DIDResult;							/* get device info data result */
 			HIDD_ATTRIBUTES HIDAttrib;					/* HID device attributes */
@@ -1325,6 +1450,7 @@ bool bOpenHidDevice(USHORT VID, USHORT PID){
 
 			BOOLEAN bRet = false;
 
+			
 				/* initialize variables */
 				GotRequiredSize = FALSE;
 
@@ -1363,9 +1489,6 @@ bool bOpenHidDevice(USHORT VID, USHORT PID){
 					to examine, we might as well return FALSE at point */
 					if(Result == FALSE)
 					{
-						/* free the memory allocated for DetailData */
-						if(detailData != NULL)
-							free(detailData);
 						
 						/* free HID device info list resources */
 						SetupDiDestroyDeviceInfoList(HidDevInfo);
