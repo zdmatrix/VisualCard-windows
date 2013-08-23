@@ -1253,12 +1253,13 @@ private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  
 private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
-//			 LPCWCH	lpcAPDUGetRandom = "0084000008";
+
 			 CHAR cAPDUCmd[] = "0084000008"; 
 			 CHAR cTmp[20];
 			 BYTE bTmp = 0;
 			 int j = 0;
-			 LPBYTE lpCmdFrame = (LPBYTE)malloc(sizeof(LPBYTE));
+			 LPBYTE lpCmdFrame = (LPBYTE)malloc(0x21);
+			 memset(lpCmdFrame, 0, 0x21);
 			 if(g_bDeviceConnected){
 				 for(int i = 0; i < 10; i ++){
 					 
@@ -1279,6 +1280,7 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 				 *(lpCmdFrame + 2) = (BYTE)0x05;		//下发数据长度
 
 				 bWriteToHIDDevice(pWriteHandle, lpCmdFrame);
+				 free(lpCmdFrame);
 			 }
 			 else{
 				MessageBox::Show("请先连接USB设备");
