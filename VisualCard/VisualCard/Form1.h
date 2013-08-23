@@ -57,8 +57,9 @@ namespace VisualCard {
 		private: System::Windows::Forms::Label^  label17;
 	
 //		LPCWCH APDUGETRANDOM;
-		array<byte^>^ g_byCmdFrame;
-		array<byte^>^ g_byAPDUDataBody;
+		array<BYTE^>^ g_byCmdFrame;
+		array<BYTE^>^ g_byAPDUDataBody;
+		array<BYTE^>^ g_byResponseData;
 
 	public: 
 
@@ -84,8 +85,9 @@ namespace VisualCard {
 			pWriteHandle = NULL;
 			pReadHandle = NULL;
 			
-			g_byCmdFrame = gcnew array<byte^>(8);
-//			APDUGETRANDOM = "0084000008"; 
+			g_byCmdFrame = gcnew array<BYTE^>(8);
+			g_byResponseData = gcnew array<BYTE^>(64);
+ 
 		}
 
 
@@ -1280,6 +1282,7 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 				 *(lpCmdFrame + 2) = (BYTE)0x05;		//下发数据长度
 
 				 bWriteToHIDDevice(pWriteHandle, lpCmdFrame);
+				 bReadFromHIDDevice(pReadHandle, g_byResponseData, 0x08);
 				 free(lpCmdFrame);
 			 }
 			 else{
@@ -1354,7 +1357,7 @@ private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sende
 
 
 bool bInitWriteHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pWriteHandle){
-	 
+	
 	*pWriteHandle = CreateFile( 
 						detailData->DevicePath,
 						GENERIC_WRITE,
@@ -1392,11 +1395,11 @@ bool bInitReadHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pReadH
 
 bool bWriteToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
 			
-			DWORD			numBytesReturned;
+			DWORD			dwNumberOfBytesWrite;
 			HIDP_CAPS		Capabilities;
 			PHIDP_PREPARSED_DATA		HidParsedData;
 			
-			bool bResult;
+			BOOL bResult = false;
 			
 			if(*pWriteHandle != NULL){
 				HidD_GetPreparsedData(*pWriteHandle, &HidParsedData);
@@ -1410,44 +1413,105 @@ bool bWriteToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
 				bResult = WriteFile(*pWriteHandle, 
 								lpWriteBuff, 
 								Capabilities.OutputReportByteLength, 
-								&numBytesReturned,
+								&dwNumberOfBytesWrite,
 								NULL);
 				
-				return bResult;
-			}
 				
+			}
+			return bResult;
+	
+	}
 
 
-		
+DWORD bReadFromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD len){
+			
+			DWORD			dwNumberOfBytesRead;
+			HIDP_CAPS		Capabilities;
+			PHIDP_PREPARSED_DATA		HidParsedData;
+			OVERLAPPED		HidOverlapped;
+			HANDLE			ReportEvent;
+
+			LPVOID	 lpReadBuff = (LPVOID)malloc(0x20);
+			
+
 			/* Create a new event for report capture */
-//			ReportEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+			ReportEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
 			/* fill the HidOverlapped structure so that Windows knows which
 			event to cause when the device sends an IN report */
-//			HidOverlapped.hEvent = ReportEvent;
-//			HidOverlapped.Offset = 0;
-//			HidOverlapped.OffsetHigh = 0;
+			HidOverlapped.hEvent = ReportEvent;
+			HidOverlapped.Offset = 0;
+			HidOverlapped.OffsetHigh = 0;
 
-			/* Use WriteFile to send an output report to the HID device.  In this
-			case we are turning on the READY LED on the target */
+			BOOL bResult = false;
 			
+			if(*pReadHandle != NULL){
+				HidD_GetPreparsedData(*pReadHandle, &HidParsedData);
+		
+				/* extract the capabilities info */
+				HidP_GetCaps( HidParsedData ,&Capabilities);
+		
+				/* Free the memory allocated when getting the preparsed data */
+				HidD_FreePreparsedData(HidParsedData);
+				
+				bResult = ReadFile(*pReadHandle, 
+								lpReadBuff, 
+								Capabilities.InputReportByteLength, 
+								&dwNumberOfBytesRead,
+								(LPOVERLAPPED)&HidOverlapped);
+				
 
+				if ( bResult == 0 )
+	{
+		// 读取错误信息
+		DWORD dwResult = GetLastError();
+		
+		// I/O端口繁忙
+		if ( dwResult == ERROR_IO_PENDING )
+		{
+
+			// 需挂起等待
+			dwResult = WaitForSingleObject ( ReportEvent, 1000 );
 			
+			// I/O端口正常
+			if ( dwResult == WAIT_OBJECT_0 )
+			{
+				// 去读取数据的正常返回值
+				GetOverlappedResult ( *pReadHandle, &HidOverlapped, &dwNumberOfBytesRead, FALSE );
+			}
+			else
+			{
+				return -1;	// 等待超时
+			}
+/*
+			while((dwResult = WaitForSingleObject ( lpDevInfo->hEventObject, 4000 )) != WAIT_OBJECT_0){
+				;
+			}
+			GetOverlappedResult ( lpDevInfo->hRead, &lpDevInfo->sHIDOverlapped, &dwNumberOfBytesRead, FALSE );
+*/
+			}
+		else
+		{
+			return -1;	// 不明错误
+		}
 	}
+			}
+			return	dwNumberOfBytesRead;
+	}
+
 
 bool bOpenHidDevice(USHORT VID, USHORT PID){
 			GUID HidGuid;
 			HDEVINFO HidDevInfo;						/* handle to structure containing all attached HID Device information */
 			SP_DEVICE_INTERFACE_DATA devInfoData;		/* Information structure for HID devices */
-			BOOLEAN Result;								/* result of getting next device information structure */
+			BOOL Result = false;								/* result of getting next device information structure */
 			DWORD Index;								/* index of HidDevInfo array entry */
 			DWORD DataSize;								/* size of the DeviceInterfaceDetail structure */		
 			BOOLEAN GotRequiredSize;					/* 1-shot got device info data structure size flag */
 			DWORD RequiredSize;							/* size of device info data structure */
-			BOOLEAN DIDResult;							/* get device info data result */
+			BOOLEAN DIDResult = false;							/* get device info data result */
 			HIDD_ATTRIBUTES HIDAttrib;					/* HID device attributes */
 			
-			HANDLE hDev;
 			HANDLE HidDevHandle;
 
 			BOOLEAN bRet = false;
@@ -1588,135 +1652,11 @@ private: System::Void btnProbeCard_Click(System::Object^  sender, System::EventA
 */
 		}
 
-bool bWriteToHIDDevice(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData){
-			
-			unsigned long	numBytesReturned;
-			unsigned char	inbuffer[33];		/* input buffer*/
-			unsigned char   outbuffer[33];		/* output buffer */
-			HIDP_CAPS		Capabilities;
-			PHIDP_PREPARSED_DATA		HidParsedData;
-			OVERLAPPED		HidOverlapped;
-			HANDLE			ReportEvent;
-			bool ret;
-			bool bResult;
-			HANDLE hDev;
-
-			hDev = CreateFile(
-				detailData->DevicePath,
-				GENERIC_WRITE,
-				FILE_SHARE_READ | FILE_SHARE_WRITE,
-				(LPSECURITY_ATTRIBUTES)NULL,
-				OPEN_EXISTING,
-				0,
-				NULL);
-			if(hDev == INVALID_HANDLE_VALUE){
-				DWORD err = GetLastError();
-			}
-				
-			HidD_GetPreparsedData(hDev, &HidParsedData);
-		
-			/* extract the capabilities info */
-			HidP_GetCaps( HidParsedData ,&Capabilities);
-		
-			/* Free the memory allocated when getting the preparsed data */
-			HidD_FreePreparsedData(HidParsedData);		
-		
-			/* Create a new event for report capture */
-//			ReportEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-
-			/* fill the HidOverlapped structure so that Windows knows which
-			event to cause when the device sends an IN report */
-//			HidOverlapped.hEvent = ReportEvent;
-//			HidOverlapped.Offset = 0;
-//			HidOverlapped.OffsetHigh = 0;
-
-			/* Use WriteFile to send an output report to the HID device.  In this
-			case we are turning on the READY LED on the target */
-			outbuffer[0] = 0x05;	/* this is used as the report ID */
-			outbuffer[1] = 0x07;	/* this flag turns on the LED */
-			outbuffer[2] = 0x11;
-			outbuffer[3] = 0x22;
-			outbuffer[4] = 0x33;
-			outbuffer[5] = 0x44;
-			outbuffer[6] = 0x55;
-
-			bResult = WriteFile(hDev, 
-								outbuffer, 
-								Capabilities.OutputReportByteLength, 
-								&numBytesReturned, 
-//								(LPOVERLAPPED) &HidOverlapped
-								NULL);
-			if(bResult){
-				ret = true;
-			}else{
-				DWORD err = GetLastError();
-				ret = false;
-			}
-			return ret;
-		 }
-
 
 };
 }
 
-/*
+
 //String^ str = System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)detailData->DevicePath);
 //							MessageBox::Show(str);
-							hDev = CreateFile( 
-												detailData->DevicePath,
-												GENERIC_WRITE,
-												FILE_SHARE_READ | FILE_SHARE_WRITE,
-												(LPSECURITY_ATTRIBUTES)NULL,
-												OPEN_EXISTING,
-												0,						//for write
-//												FILE_FLAG_OVERLAPPED,   //for read
-												NULL);
 							
-							if(hDev == INVALID_HANDLE_VALUE){
-								DWORD err = GetLastError();
-							}else{
-
-								HIDP_CAPS		Capabilities;
-								PHIDP_PREPARSED_DATA		HidParsedData;
-								OVERLAPPED		HidOverlapped;
-								HANDLE			ReportEvent;
-								unsigned char*	outbuffer;
-								unsigned char   inbuffer[33] = {0};
-								DWORD numBytesReturned;
-								
-								outbuffer = (unsigned char*)malloc(0x7);
-								outbuffer[0] = 0x05;	
-								outbuffer[1] = 0x07;	
-								outbuffer[2] = 0x11;
-								outbuffer[3] = 0x22;
-								outbuffer[4] = 0x33;
-								outbuffer[5] = 0x44;
-								outbuffer[6] = 0x55;
-								
-//								HidD_GetPreparsedData(hDev, &HidParsedData);
-		
-								/* extract the capabilities info */
-//								HidP_GetCaps( HidParsedData ,&Capabilities);
-		
-								/* Free the memory allocated when getting the preparsed data */
-//								HidD_FreePreparsedData(HidParsedData);
-
-/*								
-								if(!WriteFile(hDev, 
-									outbuffer, 
-//									Capabilities.OutputReportByteLength,
-									0x10,
-									&numBytesReturned, 
-									NULL)){
-									DWORD err = GetLastError();
-								}
-
-/*
-								if(!ReadFile(hDev, 
-									inbuffer, 
-									Capabilities.InputReportByteLength, 
-									&numBytesReturned, 
-									NULL)){
-									DWORD err = GetLastError();
-								}
-*/
