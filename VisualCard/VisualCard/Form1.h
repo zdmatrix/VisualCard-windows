@@ -86,7 +86,7 @@ namespace VisualCard {
 			pReadHandle = NULL;
 			
 			g_byCmdFrame = gcnew array<BYTE^>(8);
-			g_byResponseData = gcnew array<BYTE^>(64);
+			g_byResponseData = gcnew array<BYTE^>(33);
  
 		}
 
@@ -127,8 +127,9 @@ namespace VisualCard {
 	private: System::Windows::Forms::TextBox^  textWriteCard;
 	private: System::Windows::Forms::TextBox^  textRandomData;
 	private: System::Windows::Forms::TextBox^  textOpStatusCardTest;
+	private: System::Windows::Forms::TextBox^  textCardTestSW;
 
-	private: System::Windows::Forms::TextBox^  textSW;
+
 	private: System::Windows::Forms::Label^  label14;
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::TextBox^  textBox2;
@@ -219,7 +220,8 @@ private: System::Windows::Forms::Label^  label29;
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Form1::typeid));
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
-			this->textSW = (gcnew System::Windows::Forms::TextBox());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->textCardTestSW = (gcnew System::Windows::Forms::TextBox());
 			this->textOpStatusCardTest = (gcnew System::Windows::Forms::TextBox());
 			this->textRandomData = (gcnew System::Windows::Forms::TextBox());
 			this->textWriteCard = (gcnew System::Windows::Forms::TextBox());
@@ -234,6 +236,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->btnPowerDown = (gcnew System::Windows::Forms::Button());
 			this->btnProbeCard = (gcnew System::Windows::Forms::Button());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->label17 = (gcnew System::Windows::Forms::Label());
 			this->textOpStatusElecMoney = (gcnew System::Windows::Forms::TextBox());
 			this->label18 = (gcnew System::Windows::Forms::Label());
 			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
@@ -295,8 +298,6 @@ private: System::Windows::Forms::Label^  label29;
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->button5 = (gcnew System::Windows::Forms::Button());
-			this->label7 = (gcnew System::Windows::Forms::Label());
-			this->label17 = (gcnew System::Windows::Forms::Label());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
@@ -328,7 +329,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage1->BackColor = System::Drawing::Color::Transparent;
 			this->tabPage1->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->tabPage1->Controls->Add(this->label7);
-			this->tabPage1->Controls->Add(this->textSW);
+			this->tabPage1->Controls->Add(this->textCardTestSW);
 			this->tabPage1->Controls->Add(this->textOpStatusCardTest);
 			this->tabPage1->Controls->Add(this->textRandomData);
 			this->tabPage1->Controls->Add(this->textWriteCard);
@@ -351,14 +352,24 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"卡测试";
 			// 
-			// textSW
+			// label7
 			// 
-			this->textSW->Location = System::Drawing::Point(84, 302);
-			this->textSW->Name = L"textSW";
-			this->textSW->ReadOnly = true;
-			this->textSW->Size = System::Drawing::Size(240, 23);
-			this->textSW->TabIndex = 15;
-			this->textSW->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(15, 305);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(49, 14);
+			this->label7->TabIndex = 16;
+			this->label7->Text = L"返回SW";
+			// 
+			// textCardTestSW
+			// 
+			this->textCardTestSW->Location = System::Drawing::Point(84, 302);
+			this->textCardTestSW->Name = L"textCardTestSW";
+			this->textCardTestSW->ReadOnly = true;
+			this->textCardTestSW->Size = System::Drawing::Size(240, 23);
+			this->textCardTestSW->TabIndex = 15;
+			this->textCardTestSW->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textCardTestSW->TextChanged += gcnew System::EventHandler(this, &Form1::textCardTestSW_TextChanged);
 			// 
 			// textOpStatusCardTest
 			// 
@@ -368,6 +379,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->textOpStatusCardTest->Size = System::Drawing::Size(240, 23);
 			this->textOpStatusCardTest->TabIndex = 14;
 			this->textOpStatusCardTest->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textOpStatusCardTest->TextChanged += gcnew System::EventHandler(this, &Form1::textOpStatusCardTest_TextChanged);
 			// 
 			// textRandomData
 			// 
@@ -532,6 +544,15 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"电子现金";
 			this->tabPage2->UseVisualStyleBackColor = true;
+			// 
+			// label17
+			// 
+			this->label17->AutoSize = true;
+			this->label17->Location = System::Drawing::Point(6, 158);
+			this->label17->Name = L"label17";
+			this->label17->Size = System::Drawing::Size(96, 16);
+			this->label17->TabIndex = 17;
+			this->label17->Text = L"三 查询余额";
 			// 
 			// textOpStatusElecMoney
 			// 
@@ -1198,24 +1219,6 @@ private: System::Windows::Forms::Label^  label29;
 			this->button5->Text = L"探卡";
 			this->button5->UseVisualStyleBackColor = true;
 			// 
-			// label7
-			// 
-			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(15, 305);
-			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(49, 14);
-			this->label7->TabIndex = 16;
-			this->label7->Text = L"返回SW";
-			// 
-			// label17
-			// 
-			this->label17->AutoSize = true;
-			this->label17->Location = System::Drawing::Point(6, 158);
-			this->label17->Name = L"label17";
-			this->label17->Size = System::Drawing::Size(96, 16);
-			this->label17->TabIndex = 17;
-			this->label17->Text = L"三 查询余额";
-			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
@@ -1254,16 +1257,49 @@ private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  
 		 }
 private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
-private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
+private: System::Byte* lpbyteConvertAPDUCmd(PCHAR pCmdFrame){
+			CHAR cTmp[20];
+			BYTE bTmp = 0;
+			LPBYTE lpCmdFrame = (LPBYTE)malloc(0x21);
+			memset(lpCmdFrame, 0, 0x21);
+			
+			for(int i = 0; i < 10; i ++){
+					 
+				sprintf_s(cTmp, "%c", pCmdFrame[i]);
+				if(i % 2){
+					bTmp |= (cTmp[0] & 0x0f);
+					*(lpCmdFrame + (i / 2 + 3)) = bTmp;
+					bTmp = 0;
+				}else{
+						
+					bTmp |= ((cTmp[0] << 4) & 0xf0);
+				}
+ 
+			 }
 
-			 CHAR cAPDUCmd[] = "0084000008"; 
-			 CHAR cTmp[20];
-			 BYTE bTmp = 0;
-			 int j = 0;
-			 LPBYTE lpCmdFrame = (LPBYTE)malloc(0x21);
-			 memset(lpCmdFrame, 0, 0x21);
-			 if(g_bDeviceConnected){
-				 for(int i = 0; i < 10; i ++){
+			*lpCmdFrame = (BYTE)0x00;       //报告ID，必须为0
+			*(lpCmdFrame + 1) = (BYTE)0x04;		//指令类型码，04为APDU指令处理
+			*(lpCmdFrame + 2) = (BYTE)0x05;		//下发数据长度
+
+			return lpCmdFrame;
+		 }
+private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
+			
+			DWORD dwResponeSW;
+			String^	strResponseSW = "";
+			String^ strResponseData = "";
+			CHAR cAPDUCmd[] = "0084000008";
+			LPBYTE lpCmdFrame;
+/*
+			CHAR cTmp[20];
+			BYTE bTmp = 0;
+			int j = 0;
+			LPBYTE lpCmdFrame = (LPBYTE)malloc(0x21);
+			memset(lpCmdFrame, 0, 0x21);
+*/
+			if(g_bDeviceConnected){
+/*
+				for(int i = 0; i < 10; i ++){
 					 
 					sprintf_s(cTmp, "%c", cAPDUCmd[i]);
 					if(i % 2){
@@ -1280,10 +1316,29 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 				 *lpCmdFrame = (BYTE)0x00;       //报告ID，必须为0
 				 *(lpCmdFrame + 1) = (BYTE)0x04;		//指令类型码，04为APDU指令处理
 				 *(lpCmdFrame + 2) = (BYTE)0x05;		//下发数据长度
+ */
+				lpCmdFrame = lpbyteConvertAPDUCmd(cAPDUCmd);
+				if(bWriteToHIDDevice(pWriteHandle, lpCmdFrame)){
+					if((dwResponeSW = dwReadFromHIDDevice(pReadHandle, g_byResponseData, 0x08)) == 0x9000){
+						
+						for(int i = 0; i < 0x08; i ++){
 
-				 bWriteToHIDDevice(pWriteHandle, lpCmdFrame);
-				 bReadFromHIDDevice(pReadHandle, g_byResponseData, 0x08);
-				 free(lpCmdFrame);
+							String^ str = (*g_byResponseData[i]).ToString("X2");
+							
+							strResponseData += str;
+						}
+						textRandomData->Text = strResponseData;
+						textCardTestSW->Text = dwResponeSW.ToString("X2");
+						textOpStatusCardTest->Text = "取随机数操作成功";
+					}
+					else{
+						textOpStatusCardTest->Text = "取随机数接收数据失败";	
+					}
+				}else{
+					textOpStatusCardTest->Text = "取随机数下发指令失败";
+				}
+				 
+				free(lpCmdFrame);
 			 }
 			 else{
 				MessageBox::Show("请先连接USB设备");
@@ -1383,6 +1438,7 @@ bool bInitReadHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pReadH
 						(LPSECURITY_ATTRIBUTES)NULL,
 						OPEN_EXISTING,
 						FILE_FLAG_OVERLAPPED,						//for read
+						
 						NULL);
 							
 	if(*pReadHandle != INVALID_HANDLE_VALUE){
@@ -1423,28 +1479,31 @@ bool bWriteToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
 	}
 
 
-DWORD bReadFromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD len){
+DWORD dwReadFromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD len){
 			
 			DWORD			dwNumberOfBytesRead;
+			DWORD			dwResponseSW = 0;
 			HIDP_CAPS		Capabilities;
 			PHIDP_PREPARSED_DATA		HidParsedData;
 			OVERLAPPED		HidOverlapped;
-			HANDLE			ReportEvent;
-
-			LPVOID	 lpReadBuff = (LPVOID)malloc(0x20);
+			HANDLE			hEvent;
+			
+			LPBYTE	 lpReadBuff = (LPBYTE)malloc(0x21);
 			
 
 			/* Create a new event for report capture */
-			ReportEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+			hEvent = CreateEvent(NULL, TRUE, TRUE, "");
 
 			/* fill the HidOverlapped structure so that Windows knows which
 			event to cause when the device sends an IN report */
-			HidOverlapped.hEvent = ReportEvent;
+			HidOverlapped.hEvent = hEvent;
 			HidOverlapped.Offset = 0;
 			HidOverlapped.OffsetHigh = 0;
 
 			BOOL bResult = false;
 			
+//			LPCOMMTIMEOUTS lpCommitTimes = (LPCOMMTIMEOUTS)malloc(sizeof(LPCOMMTIMEOUTS));
+
 			if(*pReadHandle != NULL){
 				HidD_GetPreparsedData(*pReadHandle, &HidParsedData);
 		
@@ -1456,47 +1515,51 @@ DWORD bReadFromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD le
 				
 				bResult = ReadFile(*pReadHandle, 
 								lpReadBuff, 
-								Capabilities.InputReportByteLength, 
+								Capabilities.InputReportByteLength,
 								&dwNumberOfBytesRead,
 								(LPOVERLAPPED)&HidOverlapped);
-				
+								
 
 				if ( bResult == 0 )
-	{
-		// 读取错误信息
-		DWORD dwResult = GetLastError();
+				{
+					// 读取错误信息
+					DWORD dwResult = GetLastError();
 		
-		// I/O端口繁忙
-		if ( dwResult == ERROR_IO_PENDING )
-		{
+					// I/O端口繁忙
+					if ( dwResult == ERROR_IO_PENDING )
+					{
 
-			// 需挂起等待
-			dwResult = WaitForSingleObject ( ReportEvent, 1000 );
+						// 需挂起等待
+						dwResult = WaitForSingleObject ( HidOverlapped.hEvent, 2000 );
 			
-			// I/O端口正常
-			if ( dwResult == WAIT_OBJECT_0 )
-			{
-				// 去读取数据的正常返回值
-				GetOverlappedResult ( *pReadHandle, &HidOverlapped, &dwNumberOfBytesRead, FALSE );
+						// I/O端口正常
+						if ( dwResult == WAIT_OBJECT_0 )
+						{
+							// 去读取数据的正常返回值
+							GetOverlappedResult ( *pReadHandle, &HidOverlapped, &dwNumberOfBytesRead, FALSE );
+						}
+						else
+						{
+//							BOOL bGetTime = GetCommTimeouts(*pReadHandle, lpCommitTimes);
+							free(lpReadBuff);
+							CloseHandle(hEvent);
+							return -1;	// 等待超时
+						}
+
+					}
+					else
+					{
+						return -1;	// 不明错误
+					}
+				}
 			}
-			else
-			{
-				return -1;	// 等待超时
+			for(int i = 0; i < (len + 2); i ++){
+				byReadBuff[i] = *(lpReadBuff + i + 1);
 			}
-/*
-			while((dwResult = WaitForSingleObject ( lpDevInfo->hEventObject, 4000 )) != WAIT_OBJECT_0){
-				;
-			}
-			GetOverlappedResult ( lpDevInfo->hRead, &lpDevInfo->sHIDOverlapped, &dwNumberOfBytesRead, FALSE );
-*/
-			}
-		else
-		{
-			return -1;	// 不明错误
-		}
-	}
-			}
-			return	dwNumberOfBytesRead;
+			dwResponseSW |= *byReadBuff[len];
+			
+			dwResponseSW = (dwResponseSW << 8) | (*byReadBuff[len + 1]);
+			return	dwResponseSW;
 	}
 
 
@@ -1653,6 +1716,10 @@ private: System::Void btnProbeCard_Click(System::Object^  sender, System::EventA
 		}
 
 
+private: System::Void textCardTestSW_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void textOpStatusCardTest_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
 };
 }
 
