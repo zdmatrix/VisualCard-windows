@@ -45,14 +45,19 @@ namespace VisualCard {
 	public:
 
 		int g_nChallangeCodeTimes;
-		
+		int g_nTextInputNum;
+
 		array<int^>^ g_nChallangeCode;
-		
+		array<WCHAR>^ g_cTextInput;
 		
 		String^ strChallangeCode;
-		
-		bool g_bDeviceConnected;
-		
+		String^ strTextInput;
+
+		BOOL g_bDeviceConnected;
+		BOOL g_bTextInput;
+
+		KeyPressEventArgs^ eventKeyPress;
+
 		private: System::Windows::Forms::Label^  label7;
 		private: System::Windows::Forms::Label^  label17;
 	
@@ -79,15 +84,19 @@ namespace VisualCard {
 			//TODO: 在此处添加构造函数代码
 			//
 			g_nChallangeCodeTimes = 0;
-			g_nChallangeCode = gcnew array<int^>(6);
+			g_nTextInputNum = 0;
+
 			g_bDeviceConnected = false;
+			g_bTextInput = false;
+
 			detailData = NULL;
 			pWriteHandle = NULL;
 			pReadHandle = NULL;
 			
 			g_byCmdFrame = gcnew array<BYTE^>(8);
 			g_byResponseData = gcnew array<BYTE^>(33);
- 
+			g_cTextInput = gcnew array<WCHAR>(20);
+			
 		}
 
 
@@ -398,6 +407,8 @@ private: System::Windows::Forms::Label^  label29;
 			this->textWriteCard->Size = System::Drawing::Size(214, 23);
 			this->textWriteCard->TabIndex = 12;
 			this->textWriteCard->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textWriteCard->TextChanged += gcnew System::EventHandler(this, &Form1::textWriteCard_TextChanged);
+	
 			// 
 			// label6
 			// 
@@ -429,6 +440,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->btnWriteCard->TabIndex = 7;
 			this->btnWriteCard->Text = L"写卡";
 			this->btnWriteCard->UseVisualStyleBackColor = true;
+			this->btnWriteCard->Click += gcnew System::EventHandler(this, &Form1::btnWriteCard_Click);
 			// 
 			// btnReadCard
 			// 
@@ -439,7 +451,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->btnReadCard->Name = L"btnReadCard";
 			this->btnReadCard->Size = System::Drawing::Size(95, 23);
 			this->btnReadCard->TabIndex = 6;
-			this->btnReadCard->Text = L"读卡";
+			this->btnReadCard->Text = L"读8字节随机数";
 			this->btnReadCard->UseVisualStyleBackColor = true;
 			this->btnReadCard->Click += gcnew System::EventHandler(this, &Form1::btnReadCard_Click);
 			// 
@@ -1290,33 +1302,9 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 			String^ strResponseData = "";
 			CHAR cAPDUCmd[] = "0084000008";
 			LPBYTE lpCmdFrame;
-/*
-			CHAR cTmp[20];
-			BYTE bTmp = 0;
-			int j = 0;
-			LPBYTE lpCmdFrame = (LPBYTE)malloc(0x21);
-			memset(lpCmdFrame, 0, 0x21);
-*/
-			if(g_bDeviceConnected){
-/*
-				for(int i = 0; i < 10; i ++){
-					 
-					sprintf_s(cTmp, "%c", cAPDUCmd[i]);
-					if(i % 2){
-						bTmp |= (cTmp[0] & 0x0f);
-						*(lpCmdFrame + (i / 2 + 3)) = bTmp;
-						bTmp = 0;
-					}else{
-						
-						bTmp |= ((cTmp[0] << 4) & 0xf0);
-					}
- 
-				 }
 
-				 *lpCmdFrame = (BYTE)0x00;       //报告ID，必须为0
-				 *(lpCmdFrame + 1) = (BYTE)0x04;		//指令类型码，04为APDU指令处理
-				 *(lpCmdFrame + 2) = (BYTE)0x05;		//下发数据长度
- */
+			if(g_bDeviceConnected){
+
 				lpCmdFrame = lpbyteConvertAPDUCmd(cAPDUCmd);
 				if(bWriteToHIDDevice(pWriteHandle, lpCmdFrame)){
 					if((dwResponeSW = dwReadFromHIDDevice(pReadHandle, g_byResponseData, 0x08)) == 0x9000){
@@ -1719,6 +1707,55 @@ private: System::Void btnProbeCard_Click(System::Object^  sender, System::EventA
 private: System::Void textCardTestSW_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void textOpStatusCardTest_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
+		 
+private: System::Void textWriteCard_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 
+			 
+			 
+//			 if(textWriteCard_KeyDown(sender, *e)){
+//			 eventKeyPress = textWriteCard->KeyPress;
+//			 if(eventKeyPress->KeyChar.IsDigit){
+			 
+			 if(true){
+				if(textWriteCard->TextLength > 6){
+					MessageBox::Show("请输入不超过6位的数字!\r\n");	
+				 }
+				 else{
+					g_cTextInput = textWriteCard->Text->ToCharArray();
+				 }
+			 }else{
+				 MessageBox::Show("请输入0-9的数字!\r\n");
+			 }
+			 
+			 
+			 }
+		   
+private: System::Void textWriteCard_KeyDown(Object^  sender, KeyEventArgs  e) {
+			 
+			 if(e.KeyCode > Keys::D0 && e.KeyCode < Keys::D9){
+				 if(e.KeyCode > Keys::NumPad0 && e.KeyCode < Keys::NumPad9){
+//					 if(e->KeyCode == Keys::Back){
+						g_bTextInput = true;	
+//						}
+				 }
+				 else{
+					g_bTextInput = false;
+				 }
+			 }else{
+				g_bTextInput = false;
+			}
+			
+			 }
+
+
+private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventArgs^  e) {
+			 for(int i = 0; i < textWriteCard->TextLength; i ++){
+				 if(g_cTextInput[i] < 0x30 || g_cTextInput[i] > 0x39){
+					MessageBox::Show("请输入0-9的数字!\r\n");
+				}
+			 
+			 }
 		 }
 };
 }
