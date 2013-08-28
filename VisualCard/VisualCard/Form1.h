@@ -46,17 +46,18 @@ namespace VisualCard {
 
 		int g_nChallangeCodeTimes;
 		int g_nTextInputNum;
+		int g_nTextInputIndexPre;
+		int g_nTextInputIndexNow;
 
 		array<int^>^ g_nChallangeCode;
 		array<WCHAR>^ g_cTextInput;
 		
-		String^ strChallangeCode;
-		String^ strTextInput;
+		String^ lpstrChallangeCode;
+		String^ lpstrTextInput;
 
 		BOOL g_bDeviceConnected;
 		BOOL g_bTextInput;
 
-		KeyPressEventArgs^ eventKeyPress;
 
 		private: System::Windows::Forms::Label^  label7;
 		private: System::Windows::Forms::Label^  label17;
@@ -85,6 +86,8 @@ namespace VisualCard {
 			//
 			g_nChallangeCodeTimes = 0;
 			g_nTextInputNum = 0;
+			g_nTextInputIndexPre = 0;
+			g_nTextInputIndexNow = 0;
 
 			g_bDeviceConnected = false;
 			g_bTextInput = false;
@@ -408,7 +411,6 @@ private: System::Windows::Forms::Label^  label29;
 			this->textWriteCard->TabIndex = 12;
 			this->textWriteCard->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->textWriteCard->TextChanged += gcnew System::EventHandler(this, &Form1::textWriteCard_TextChanged);
-	
 			// 
 			// label6
 			// 
@@ -1269,11 +1271,28 @@ private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  
 		 }
 private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
-private: System::Byte* lpbyteConvertAPDUCmd(PCHAR pCmdFrame){
+
+private: System::Byte* lpbyteConvert_String2Byte(String^ strCmdFrame){
 			CHAR cTmp[20];
 			BYTE bTmp = 0;
 			LPBYTE lpCmdFrame = (LPBYTE)malloc(0x21);
 			memset(lpCmdFrame, 0, 0x21);
+			
+			array<WCHAR>^ ch = strCmdFrame->ToCharArray();
+			 BYTE bTmp = 0;
+			 LPBYTE lpCmdFrame = (LPBYTE)malloc(strCmdFrame->Length / 2);
+			 for(int i = 0; i < ch->Length; i ++){
+					 
+				if(i % 2){
+					bTmp |= (ch[i] & 0x0f);
+					*(lpCmdFrame + (i / 2 + 3)) = bTmp;
+					bTmp = 0;
+				}else{
+						
+					bTmp |= ((ch[i] << 4) & 0xf0);
+				}
+ 
+			 }
 			
 			for(int i = 0; i < 10; i ++){
 					 
@@ -1295,6 +1314,18 @@ private: System::Byte* lpbyteConvertAPDUCmd(PCHAR pCmdFrame){
 
 			return lpCmdFrame;
 		 }
+
+private: System::String^ lpstrConvert_TextInput(String^ lpstrTextInput){
+			const char* lpcTmp = (char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(lpstrTextInput)).ToPointer();
+			 string strTmp = lpcTmp;
+			 int nTmp = atoi(strTmp.c_str());
+			 String^ str = nTmp.ToString("X");
+			 if(str->Length % 2){
+				str = "0" + str;
+			 }
+			 lpstrTextInput = "";
+			 return str;
+		 }
 private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
 			
 			DWORD dwResponeSW;
@@ -1305,8 +1336,8 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 
 			if(g_bDeviceConnected){
 
-				lpCmdFrame = lpbyteConvertAPDUCmd(cAPDUCmd);
-				if(bWriteToHIDDevice(pWriteHandle, lpCmdFrame)){
+				lpCmdFrame = lpbyteConvert_String2Byte(cAPDUCmd);
+				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
 					if((dwResponeSW = dwReadFromHIDDevice(pReadHandle, g_byResponseData, 0x08)) == 0x9000){
 						
 						for(int i = 0; i < 0x08; i ++){
@@ -1361,11 +1392,11 @@ private: System::Void btnGenerateChallangeCode_Click(System::Object^  sender, Sy
 				 g_nChallangeCode[i] = fixRandom->Next(10);
 				 sprintf_s(ch, "%d", *g_nChallangeCode[i]);
 				 String^ str= System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)ch); 
-				 strChallangeCode += str;
+				 lpstrChallangeCode += str;
 				 
 			 }
-			 textChallangeCode->Text = strChallangeCode;
-			 strChallangeCode = "";
+			 textChallangeCode->Text = lpstrChallangeCode;
+			 lpstrChallangeCode = "";
 			 textOPStatusOTP->Text = "生成挑战码成功";	
 			 }else{
 				 MessageBox::Show("请先连接USB设备");
@@ -1437,7 +1468,7 @@ bool bInitReadHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pReadH
 }
 
 
-bool bWriteToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
+bool bWrite_ToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
 			
 			DWORD			dwNumberOfBytesWrite;
 			HIDP_CAPS		Capabilities;
@@ -1696,7 +1727,7 @@ private: System::Void btnProbeCard_Click(System::Object^  sender, System::EventA
 			 if(!g_bDeviceConnected){
 				 MessageBox::Show("USB设备未连接，请先连接!\r\n");
 			 }else{
-				 if(bWriteToHIDDevice(&hDevice)){
+				 if(bWrite_ToHIDDevice(&hDevice)){
 					MessageBox::Show("发送成功!\r\n");
 				 }
 			 }
@@ -1711,51 +1742,44 @@ private: System::Void textOpStatusCardTest_TextChanged(System::Object^  sender, 
 		 
 private: System::Void textWriteCard_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 
-			 
-			 
-//			 if(textWriteCard_KeyDown(sender, *e)){
-//			 eventKeyPress = textWriteCard->KeyPress;
-//			 if(eventKeyPress->KeyChar.IsDigit){
-			 
-			 if(true){
-				if(textWriteCard->TextLength > 6){
-					MessageBox::Show("请输入不超过6位的数字!\r\n");	
-				 }
-				 else{
-					g_cTextInput = textWriteCard->Text->ToCharArray();
-				 }
-			 }else{
-				 MessageBox::Show("请输入0-9的数字!\r\n");
-			 }
+				  lpstrTextInput = strTextInput();
 			 
 			 
 			 }
 		   
-private: System::Void textWriteCard_KeyDown(Object^  sender, KeyEventArgs  e) {
-			 
-			 if(e.KeyCode > Keys::D0 && e.KeyCode < Keys::D9){
-				 if(e.KeyCode > Keys::NumPad0 && e.KeyCode < Keys::NumPad9){
-//					 if(e->KeyCode == Keys::Back){
-						g_bTextInput = true;	
-//						}
-				 }
-				 else{
-					g_bTextInput = false;
-				 }
-			 }else{
-				g_bTextInput = false;
-			}
-			
-			 }
-
 
 private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventArgs^  e) {
-			 for(int i = 0; i < textWriteCard->TextLength; i ++){
-				 if(g_cTextInput[i] < 0x30 || g_cTextInput[i] > 0x39){
-					MessageBox::Show("请输入0-9的数字!\r\n");
-				}
 			 
-			 }
+			 String^ strText = lpstrConvert_TextInput(lpstrTextInput);
+			 String^ strLen = (strText->Length / 2).ToString();
+			 
+			 String^ strCmdFrame = "80bf01000" + strLen + strText;
+			 
+			 
+		 }
+
+private: String^ strTextInput(){
+				array<WCHAR>^ lpCharArray;
+				int index = 0;
+				if(textWriteCard->TextLength > 6){
+					MessageBox::Show("请输入不超过6位的数字!\r\n");	
+				 }
+				 else{
+					 lpCharArray = textWriteCard->Text->ToCharArray();
+					 if(!textWriteCard->TextLength){
+						index = textWriteCard->TextLength;	
+					 }else{
+						index = textWriteCard->TextLength - 1;
+					 }
+					 if(lpCharArray->Length){
+						if(lpCharArray[index] < 0x30 || lpCharArray[index] > 0x39){
+							MessageBox::Show("请输入0-9的数字!\r\n");
+						}
+					}
+					 
+					
+				 }
+				 return textWriteCard->Text;
 		 }
 };
 }
