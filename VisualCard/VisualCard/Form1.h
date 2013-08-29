@@ -99,7 +99,7 @@ namespace VisualCard {
 			g_byCmdFrame = gcnew array<BYTE^>(8);
 			g_byResponseData = gcnew array<BYTE^>(33);
 			g_cTextInput = gcnew array<WCHAR>(20);
-			
+			lpstrTextInput = nullptr;
 		}
 
 
@@ -1273,17 +1273,19 @@ private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  
 		 }
 
 private: System::Byte* lpbyteConvert_String2Byte(String^ strCmdFrame){
-			CHAR cTmp[20];
-			BYTE bTmp = 0;
-			LPBYTE lpCmdFrame = (LPBYTE)malloc(0x21);
-			memset(lpCmdFrame, 0, 0x21);
 			
 			array<WCHAR>^ ch = strCmdFrame->ToCharArray();
 			 BYTE bTmp = 0;
-			 LPBYTE lpCmdFrame = (LPBYTE)malloc(strCmdFrame->Length / 2);
+			 LPBYTE lpCmdFrame = (LPBYTE)malloc(strCmdFrame->Length / 2 + 3);
 			 for(int i = 0; i < ch->Length; i ++){
-					 
-				if(i % 2){
+				 if(ch[i] < 'a' && ch[i] >= 'A'){
+					ch[i] -= 0x37;		//char ch = 'A', (int)ch = 0x41, A->Hex = 0x0A = (Dec)10, 0x41 - 0x0A = 0x37
+				 }
+				 if(ch[i] >= 'a'){
+					ch[i] -= 0x57;		//char ch = 'a', (int)ch = 0x61, a->Hex = 0x0A = (Dec)10, 0x61 - 0x0A = 0x57
+				 }
+				 if(i % 2){
+					
 					bTmp |= (ch[i] & 0x0f);
 					*(lpCmdFrame + (i / 2 + 3)) = bTmp;
 					bTmp = 0;
@@ -1294,30 +1296,19 @@ private: System::Byte* lpbyteConvert_String2Byte(String^ strCmdFrame){
  
 			 }
 			
-			for(int i = 0; i < 10; i ++){
-					 
-				sprintf_s(cTmp, "%c", pCmdFrame[i]);
-				if(i % 2){
-					bTmp |= (cTmp[0] & 0x0f);
-					*(lpCmdFrame + (i / 2 + 3)) = bTmp;
-					bTmp = 0;
-				}else{
-						
-					bTmp |= ((cTmp[0] << 4) & 0xf0);
-				}
- 
-			 }
 
 			*lpCmdFrame = (BYTE)0x00;       //报告ID，必须为0
 			*(lpCmdFrame + 1) = (BYTE)0x04;		//指令类型码，04为APDU指令处理
-			*(lpCmdFrame + 2) = (BYTE)0x05;		//下发数据长度
+			*(lpCmdFrame + 2) = (BYTE)(strCmdFrame->Length / 2);		//下发数据长度
 
 			return lpCmdFrame;
 		 }
 
 private: System::String^ lpstrConvert_TextInput(String^ lpstrTextInput){
 			const char* lpcTmp = (char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(lpstrTextInput)).ToPointer();
-			 string strTmp = lpcTmp;
+			 
+			string strTmp = lpcTmp;
+			 
 			 int nTmp = atoi(strTmp.c_str());
 			 String^ str = nTmp.ToString("X");
 			 if(str->Length % 2){
@@ -1326,19 +1317,61 @@ private: System::String^ lpstrConvert_TextInput(String^ lpstrTextInput){
 			 lpstrTextInput = "";
 			 return str;
 		 }
+
+private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventArgs^  e) {
+			 if(g_bDeviceConnected && lpstrTextInput != nullptr){
+
+//			 String^ strText = lpstrConvert_TextInput(lpstrTextInput);
+				 String^ strLen = lpstrTextInput->Length.ToString();
+				 String^ strCmdFrame = "80bf01000" + strLen;
+//				 array<WCHAR>^ input = lpstrTextInput->ToCharArray();
+				 const char* input = (char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(lpstrTextInput)).ToPointer();
+				 for(int i = 0; i < lpstrTextInput->Length; i ++){
+					 int n = *(input + i);
+					 strCmdFrame += n.ToString("X2");
+					 
+				 }
+			 
+			  
+			 DWORD dwResponeSW;
+
+			 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strCmdFrame);
+			 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+				if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
+					textCardTestSW->Text = dwResponeSW.ToString("X2");
+					textOpStatusCardTest->Text = "写卡数据操作成功";	
+				}
+				else{
+					textCardTestSW->Text = dwResponeSW.ToString("X2");
+					textOpStatusCardTest->Text = "写卡数据读操作失败";
+				}
+			 }else{
+				 textCardTestSW->Text = "没有SW数据";
+				 textOpStatusCardTest->Text = "写卡数据写操作失败";
+			 }
+			 }
+			 else if(!g_bDeviceConnected){
+				  MessageBox::Show("请先连接USB设备....");
+			 }
+			 else{
+				MessageBox::Show("请输入需要在卡上显示的数字....\n\r");
+			 }
+		 }
+
+
 private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
 			
 			DWORD dwResponeSW;
 			String^	strResponseSW = "";
 			String^ strResponseData = "";
-			CHAR cAPDUCmd[] = "0084000008";
+			String^ strAPDUCmd = "0084000008";
 			LPBYTE lpCmdFrame;
 
 			if(g_bDeviceConnected){
 
-				lpCmdFrame = lpbyteConvert_String2Byte(cAPDUCmd);
+				lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd);
 				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
-					if((dwResponeSW = dwReadFromHIDDevice(pReadHandle, g_byResponseData, 0x08)) == 0x9000){
+					if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x08)) == 0x9000){
 						
 						for(int i = 0; i < 0x08; i ++){
 
@@ -1357,7 +1390,7 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 					textOpStatusCardTest->Text = "取随机数下发指令失败";
 				}
 				 
-				free(lpCmdFrame);
+//				free(lpCmdFrame);
 			 }
 			 else{
 				MessageBox::Show("请先连接USB设备");
@@ -1498,7 +1531,7 @@ bool bWrite_ToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
 	}
 
 
-DWORD dwReadFromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD len){
+DWORD dwRead_FromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD len){
 			
 			DWORD			dwNumberOfBytesRead;
 			DWORD			dwResponseSW = 0;
@@ -1748,15 +1781,7 @@ private: System::Void textWriteCard_TextChanged(System::Object^  sender, System:
 			 }
 		   
 
-private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventArgs^  e) {
-			 
-			 String^ strText = lpstrConvert_TextInput(lpstrTextInput);
-			 String^ strLen = (strText->Length / 2).ToString();
-			 
-			 String^ strCmdFrame = "80bf01000" + strLen + strText;
-			 
-			 
-		 }
+
 
 private: String^ strTextInput(){
 				array<WCHAR>^ lpCharArray;
