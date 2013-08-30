@@ -48,12 +48,16 @@ namespace VisualCard {
 		int g_nTextInputNum;
 		int g_nTextInputIndexPre;
 		int g_nTextInputIndexNow;
-
+		int g_nBanlance;
+		DWORD dwResponeSW;
+			 
 		array<int^>^ g_nChallangeCode;
 		array<WCHAR>^ g_cTextInput;
 		
 		String^ lpstrChallangeCode;
 		String^ lpstrTextInput;
+		String^ lpstrResponseData;
+		String^ lpstrResponseSW;
 
 		BOOL g_bDeviceConnected;
 		BOOL g_bTextInput;
@@ -88,6 +92,7 @@ namespace VisualCard {
 			g_nTextInputNum = 0;
 			g_nTextInputIndexPre = 0;
 			g_nTextInputIndexNow = 0;
+			g_nBanlance = 0;
 
 			g_bDeviceConnected = false;
 			g_bTextInput = false;
@@ -100,6 +105,8 @@ namespace VisualCard {
 			g_byResponseData = gcnew array<BYTE^>(33);
 			g_cTextInput = gcnew array<WCHAR>(20);
 			lpstrTextInput = nullptr;
+			lpstrResponseData = "";
+			lpstrResponseSW = "";
 		}
 
 
@@ -658,6 +665,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->btnBanlance->TabIndex = 6;
 			this->btnBanlance->Text = L"查询余额";
 			this->btnBanlance->UseVisualStyleBackColor = true;
+			this->btnBanlance->Click += gcnew System::EventHandler(this, &Form1::btnBanlance_Click);
 			// 
 			// label14
 			// 
@@ -1333,7 +1341,7 @@ private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventA
 				 }
 			 
 			  
-			 DWORD dwResponeSW;
+			 
 
 			 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strCmdFrame);
 			 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
@@ -1361,9 +1369,9 @@ private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventA
 
 private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
 			
-			DWORD dwResponeSW;
-			String^	strResponseSW = "";
-			String^ strResponseData = "";
+			
+			
+			
 			String^ strAPDUCmd = "0084000008";
 			LPBYTE lpCmdFrame;
 
@@ -1377,9 +1385,9 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 
 							String^ str = (*g_byResponseData[i]).ToString("X2");
 							
-							strResponseData += str;
+							lpstrResponseData += str;
 						}
-						textRandomData->Text = strResponseData;
+						textRandomData->Text = lpstrResponseData;
 						textCardTestSW->Text = dwResponeSW.ToString("X2");
 						textOpStatusCardTest->Text = "取随机数操作成功";
 					}
@@ -1397,6 +1405,38 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 			 }
 			 
 		 }
+
+private: System::Void btnBanlance_Click(System::Object^  sender, System::EventArgs^  e) {
+			 
+			 
+
+			 if(g_bDeviceConnected){
+				String^ strAPDUCmd = "00a4000002";
+				String^ strFileId = "00bf";
+				strAPDUCmd += strFileId;
+				LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd);
+				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+					if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
+					   strAPDUCmd = "00b0000004";
+					   lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd);
+					   if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+						   if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x04)) == 0x9000){
+								for(int i = 0; i < 0x04; i ++){
+									String^ str = (*g_byResponseData[i]).ToString("X2");
+									lpstrResponseData += str;
+								}
+						   }	
+					   }
+					}
+				}
+			 }
+			 else{
+				MessageBox::Show("请先连接USB设备");
+			 }
+
+
+		 }
+
 private: System::Void textRandomData_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
@@ -1806,6 +1846,7 @@ private: String^ strTextInput(){
 				 }
 				 return textWriteCard->Text;
 		 }
+
 };
 }
 
