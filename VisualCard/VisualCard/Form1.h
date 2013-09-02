@@ -61,6 +61,7 @@ namespace VisualCard {
 
 		BOOL g_bDeviceConnected;
 		BOOL g_bTextInput;
+		Boolean g_bGetBanlance;
 
 
 		private: System::Windows::Forms::Label^  label7;
@@ -96,6 +97,7 @@ namespace VisualCard {
 
 			g_bDeviceConnected = false;
 			g_bTextInput = false;
+			g_bGetBanlance = false;
 
 			detailData = NULL;
 			pWriteHandle = NULL;
@@ -370,6 +372,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage1->Size = System::Drawing::Size(560, 363);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"卡测试";
+			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
 			// label7
 			// 
@@ -546,6 +549,7 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			// tabPage2
 			// 
+			this->tabPage2->AccessibleRole = System::Windows::Forms::AccessibleRole::TitleBar;
 			this->tabPage2->Controls->Add(this->label17);
 			this->tabPage2->Controls->Add(this->textOpStatusElecMoney);
 			this->tabPage2->Controls->Add(this->label18);
@@ -565,6 +569,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"电子现金";
 			this->tabPage2->UseVisualStyleBackColor = true;
+			this->tabPage2->Click += gcnew System::EventHandler(this, &Form1::tabPage2_Click);
 			// 
 			// label17
 			// 
@@ -1280,7 +1285,7 @@ private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  
 private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 
-private: System::Byte* lpbyteConvert_String2Byte(String^ strCmdFrame){
+private: System::Byte* lpbyteConvert_String2Byte(String^ strCmdFrame, Boolean bContinus){
 			
 			array<WCHAR>^ ch = strCmdFrame->ToCharArray();
 			 BYTE bTmp = 0;
@@ -1306,7 +1311,12 @@ private: System::Byte* lpbyteConvert_String2Byte(String^ strCmdFrame){
 			
 
 			*lpCmdFrame = (BYTE)0x00;       //报告ID，必须为0
-			*(lpCmdFrame + 1) = (BYTE)0x04;		//指令类型码，04为APDU指令处理
+			if(bContinus){
+				*(lpCmdFrame + 1) = (BYTE)0x04;
+			}          //指令类型码，04为APDU指令处理
+			else{
+				*(lpCmdFrame + 1) = (BYTE)0x84;
+			}
 			*(lpCmdFrame + 2) = (BYTE)(strCmdFrame->Length / 2);		//下发数据长度
 
 			return lpCmdFrame;
@@ -1343,7 +1353,7 @@ private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventA
 			  
 			 
 
-			 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strCmdFrame);
+			 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strCmdFrame, true);
 			 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
 				if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
 					textCardTestSW->Text = dwResponeSW.ToString("X2");
@@ -1377,7 +1387,7 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 
 			if(g_bDeviceConnected){
 
-				lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd);
+				lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, true);
 				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
 					if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x08)) == 0x9000){
 						
@@ -1388,6 +1398,7 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 							lpstrResponseData += str;
 						}
 						textRandomData->Text = lpstrResponseData;
+						lpstrResponseData = "";
 						textCardTestSW->Text = dwResponeSW.ToString("X2");
 						textOpStatusCardTest->Text = "取随机数操作成功";
 					}
@@ -1406,30 +1417,57 @@ private: System::Void btnReadCard_Click(System::Object^  sender, System::EventAr
 			 
 		 }
 
+
+private: System::Boolean bSelectFile(){
+			 Boolean	bret = false;
+			 String^ strAPDUCmd = "00a4000002";
+				String^ strFileId = "00bf";
+				strAPDUCmd += strFileId;
+				LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, true);
+				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+					if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
+						bret = true;
+					}
+				}
+				return bret;
+		 }
 private: System::Void btnBanlance_Click(System::Object^  sender, System::EventArgs^  e) {
 			 
 			 
+			 String^ str;
+
+			 str = "18628";
+			 textBanlanceElecMoney->Text = lpstrResponseData->Format({0, D}, str);
 
 			 if(g_bDeviceConnected){
-				String^ strAPDUCmd = "00a4000002";
+/*
+				 String^ strAPDUCmd = "00a4000002";
 				String^ strFileId = "00bf";
 				strAPDUCmd += strFileId;
 				LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd);
 				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
 					if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
-					   strAPDUCmd = "00b0000004";
-					   lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd);
+*/
+				 
+				 if(bSelectFile()){
+					String^ strAPDUCmd = "00b0000004";
+					   LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, false);
 					   if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
 						   if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x04)) == 0x9000){
 								for(int i = 0; i < 0x04; i ++){
-									String^ str = (*g_byResponseData[i]).ToString("X2");
+									str = (*g_byResponseData[i]).ToString("X2");
 									lpstrResponseData += str;
 								}
+								
+								
+								const char* input = (char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(lpstrResponseData)).ToPointer();
+								DWORD tmp = strtoul(input, 0 , 10);
+								textBanlanceElecMoney->Text = lpstrResponseData->Format("D", tmp);
 						   }	
 					   }
 					}
 				}
-			 }
+			 
 			 else{
 				MessageBox::Show("请先连接USB设备");
 			 }
@@ -1651,6 +1689,8 @@ DWORD dwRead_FromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD 
 			dwResponseSW |= *byReadBuff[len];
 			
 			dwResponseSW = (dwResponseSW << 8) | (*byReadBuff[len + 1]);
+			free(lpReadBuff);
+			CloseHandle(hEvent);
 			return	dwResponseSW;
 	}
 
@@ -1847,6 +1887,9 @@ private: String^ strTextInput(){
 				 return textWriteCard->Text;
 		 }
 
+private: System::Void tabPage2_Click(System::Object^  sender, System::EventArgs^  e) {
+			 
+		 }
 };
 }
 
