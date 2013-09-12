@@ -9,8 +9,8 @@
 
 extern "C" {    // this MUST be included
 
-// These files are in the Windows DDK
-//#include <initguid.h>
+	// These files are in the Windows DDK
+	//#include <initguid.h>
 #include "hidsdi.h"
 #include <setupapi.h>
 
@@ -41,7 +41,7 @@ namespace VisualCard {
 	/// </summary>
 	public ref class Form1 : public System::Windows::Forms::Form
 	{
-	
+
 	public:
 
 		int g_nChallangeCodeTimes;
@@ -50,27 +50,34 @@ namespace VisualCard {
 		int g_nTextInputIndexNow;
 		int g_nBanlance;
 		DWORD dwResponeSW;
-			 
+
 		array<int^>^ g_nChallangeCode;
 		array<WCHAR>^ g_cTextInput;
-		
+
 		String^ lpstrChallangeCode;
-		String^ lpstrTextInput;
+		String^ lpstrResponseCode;
+		String^ lpstrAuthCode;
+		String^ lpstrChargeCashInput;
+		String^ lpstrConsumeCashInput;
+		String^ lpstrWriteCardNumInput;
+		String^ lpstrResponseCodeInput;
+		String^ lpstrTransCashInput;
 		String^ lpstrResponseData;
 		String^ lpstrResponseSW;
+
 
 		BOOL g_bDeviceConnected;
 		BOOL g_bTextInput;
 		Boolean g_bGetBanlance;
 
 
-		private: System::Windows::Forms::Label^  label7;
-		private: System::Windows::Forms::Label^  label17;
-	
-//		LPCWCH APDUGETRANDOM;
-		array<BYTE^>^ g_byCmdFrame;
-		array<BYTE^>^ g_byAPDUDataBody;
-		array<BYTE^>^ g_byResponseData;
+	private: System::Windows::Forms::Label^  label7;
+	private: System::Windows::Forms::Label^  label17;
+
+			 //		LPCWCH APDUGETRANDOM;
+			 array<BYTE^>^ g_byCmdFrame;
+			 array<BYTE^>^ g_byAPDUDataBody;
+			 array<BYTE^>^ g_byResponseData;
 
 	public: 
 
@@ -79,8 +86,8 @@ namespace VisualCard {
 		PHANDLE pWriteHandle;
 		PHANDLE pReadHandle;
 
-		
-//		LPCWCH	lpcAPDUGetRandom;
+
+		//		LPCWCH	lpcAPDUGetRandom;
 
 	public:
 		Form1(void)
@@ -102,17 +109,19 @@ namespace VisualCard {
 			detailData = NULL;
 			pWriteHandle = NULL;
 			pReadHandle = NULL;
-			
+
 			g_byCmdFrame = gcnew array<BYTE^>(8);
 			g_byResponseData = gcnew array<BYTE^>(33);
 			g_cTextInput = gcnew array<WCHAR>(20);
-			lpstrTextInput = nullptr;
+			g_nChallangeCode = gcnew array<int^>(6);
+
 			lpstrResponseData = "";
 			lpstrResponseSW = "";
+			lpstrAuthCode = "";
 		}
 
 
-		
+
 	protected:
 		/// <summary>
 		/// 清理所有正在使用的资源。
@@ -172,54 +181,62 @@ namespace VisualCard {
 	private: System::Windows::Forms::Button^  btnBanlance;
 	private: System::Windows::Forms::Label^  label15;
 	private: System::Windows::Forms::Button^  btnCharge;
+	private: System::Windows::Forms::TextBox^  textCharge;
 
 
-	private: System::Windows::Forms::TextBox^  textBox6;
+
+
 	private: System::Windows::Forms::Button^  btnCounsume;
 	private: System::Windows::Forms::Label^  label16;
-	private: System::Windows::Forms::TextBox^  textOpStatusElecMoney;
-	private: System::Windows::Forms::Label^  label18;
 
-	private: System::Windows::Forms::TextBox^  textBox7;
+
+	private: System::Windows::Forms::TextBox^  textConsume;
+
+
 	private: System::Windows::Forms::Button^  btnRSAKey;
 	private: System::Windows::Forms::TextBox^  textBox8;
 	private: System::Windows::Forms::Label^  label20;
 	private: System::Windows::Forms::Label^  label19;
 	private: System::Windows::Forms::Label^  label24;
-	private: System::Windows::Forms::TextBox^  textBox11;
+private: System::Windows::Forms::TextBox^  textTransCash;
+
+
 	private: System::Windows::Forms::TextBox^  textBox10;
 	private: System::Windows::Forms::Label^  label23;
 	private: System::Windows::Forms::TextBox^  textBox9;
 	private: System::Windows::Forms::Label^  label22;
 	private: System::Windows::Forms::Label^  label21;
-	private: System::Windows::Forms::TextBox^  textOpStatusNewUKey;
 
-	private: System::Windows::Forms::Label^  label25;
+
+
 
 	private: System::Windows::Forms::Button^  btnSendData;
 	private: System::Windows::Forms::TextBox^  textBanlanceNewUKey;
-	private: System::Windows::Forms::Button^  button6;
+private: System::Windows::Forms::Button^  btnUKeyBanlance;
+
 	private: System::Windows::Forms::PictureBox^  pictureBoxAuthCode;
 
 
 	private: System::Windows::Forms::Label^  label26;
-	private: System::Windows::Forms::Button^  btnDownloadCode;
+	private: System::Windows::Forms::Button^  btnGenerateResponseCode;
+
 
 
 	private: System::Windows::Forms::Label^  label28;
-private: System::Windows::Forms::TextBox^  textChallangeCode;
+	private: System::Windows::Forms::TextBox^  textChallangeCode;
 
 	private: System::Windows::Forms::Button^  btnGenerateChallangeCode;
 	private: System::Windows::Forms::Label^  label27;
-private: System::Windows::Forms::TextBox^  textOPStatusOTP;
 
-private: System::Windows::Forms::Label^  label31;
-private: System::Windows::Forms::PictureBox^  pictureBoxLogIn;
 
-private: System::Windows::Forms::TextBox^  textBox12;
-private: System::Windows::Forms::Button^  btnLogIn;
-private: System::Windows::Forms::Label^  label30;
-private: System::Windows::Forms::Label^  label29;
+	private: System::Windows::Forms::Label^  label31;
+	private: System::Windows::Forms::PictureBox^  pictureBoxLogIn;
+	private: System::Windows::Forms::TextBox^  textResponseCode;
+
+
+	private: System::Windows::Forms::Button^  btnLogIn;
+	private: System::Windows::Forms::Label^  label30;
+
 
 
 
@@ -258,13 +275,11 @@ private: System::Windows::Forms::Label^  label29;
 			this->btnProbeCard = (gcnew System::Windows::Forms::Button());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
 			this->label17 = (gcnew System::Windows::Forms::Label());
-			this->textOpStatusElecMoney = (gcnew System::Windows::Forms::TextBox());
-			this->label18 = (gcnew System::Windows::Forms::Label());
-			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
+			this->textConsume = (gcnew System::Windows::Forms::TextBox());
 			this->btnCounsume = (gcnew System::Windows::Forms::Button());
 			this->label16 = (gcnew System::Windows::Forms::Label());
 			this->btnCharge = (gcnew System::Windows::Forms::Button());
-			this->textBox6 = (gcnew System::Windows::Forms::TextBox());
+			this->textCharge = (gcnew System::Windows::Forms::TextBox());
 			this->label15 = (gcnew System::Windows::Forms::Label());
 			this->textBanlanceElecMoney = (gcnew System::Windows::Forms::TextBox());
 			this->btnBanlance = (gcnew System::Windows::Forms::Button());
@@ -272,12 +287,10 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
 			this->pictureBoxAuthCode = (gcnew System::Windows::Forms::PictureBox());
 			this->textBanlanceNewUKey = (gcnew System::Windows::Forms::TextBox());
-			this->button6 = (gcnew System::Windows::Forms::Button());
-			this->textOpStatusNewUKey = (gcnew System::Windows::Forms::TextBox());
-			this->label25 = (gcnew System::Windows::Forms::Label());
+			this->btnUKeyBanlance = (gcnew System::Windows::Forms::Button());
 			this->btnSendData = (gcnew System::Windows::Forms::Button());
 			this->label24 = (gcnew System::Windows::Forms::Label());
-			this->textBox11 = (gcnew System::Windows::Forms::TextBox());
+			this->textTransCash = (gcnew System::Windows::Forms::TextBox());
 			this->textBox10 = (gcnew System::Windows::Forms::TextBox());
 			this->label23 = (gcnew System::Windows::Forms::Label());
 			this->textBox9 = (gcnew System::Windows::Forms::TextBox());
@@ -288,14 +301,12 @@ private: System::Windows::Forms::Label^  label29;
 			this->label20 = (gcnew System::Windows::Forms::Label());
 			this->label19 = (gcnew System::Windows::Forms::Label());
 			this->tabPage4 = (gcnew System::Windows::Forms::TabPage());
-			this->textOPStatusOTP = (gcnew System::Windows::Forms::TextBox());
 			this->label31 = (gcnew System::Windows::Forms::Label());
 			this->pictureBoxLogIn = (gcnew System::Windows::Forms::PictureBox());
-			this->textBox12 = (gcnew System::Windows::Forms::TextBox());
+			this->textResponseCode = (gcnew System::Windows::Forms::TextBox());
 			this->btnLogIn = (gcnew System::Windows::Forms::Button());
 			this->label30 = (gcnew System::Windows::Forms::Label());
-			this->label29 = (gcnew System::Windows::Forms::Label());
-			this->btnDownloadCode = (gcnew System::Windows::Forms::Button());
+			this->btnGenerateResponseCode = (gcnew System::Windows::Forms::Button());
 			this->label28 = (gcnew System::Windows::Forms::Label());
 			this->textChallangeCode = (gcnew System::Windows::Forms::TextBox());
 			this->btnGenerateChallangeCode = (gcnew System::Windows::Forms::Button());
@@ -551,13 +562,11 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			this->tabPage2->AccessibleRole = System::Windows::Forms::AccessibleRole::TitleBar;
 			this->tabPage2->Controls->Add(this->label17);
-			this->tabPage2->Controls->Add(this->textOpStatusElecMoney);
-			this->tabPage2->Controls->Add(this->label18);
-			this->tabPage2->Controls->Add(this->textBox7);
+			this->tabPage2->Controls->Add(this->textConsume);
 			this->tabPage2->Controls->Add(this->btnCounsume);
 			this->tabPage2->Controls->Add(this->label16);
 			this->tabPage2->Controls->Add(this->btnCharge);
-			this->tabPage2->Controls->Add(this->textBox6);
+			this->tabPage2->Controls->Add(this->textCharge);
 			this->tabPage2->Controls->Add(this->label15);
 			this->tabPage2->Controls->Add(this->textBanlanceElecMoney);
 			this->tabPage2->Controls->Add(this->btnBanlance);
@@ -574,51 +583,35 @@ private: System::Windows::Forms::Label^  label29;
 			// label17
 			// 
 			this->label17->AutoSize = true;
-			this->label17->Location = System::Drawing::Point(6, 158);
+			this->label17->Location = System::Drawing::Point(6, 234);
 			this->label17->Name = L"label17";
 			this->label17->Size = System::Drawing::Size(96, 16);
 			this->label17->TabIndex = 17;
 			this->label17->Text = L"三 查询余额";
 			// 
-			// textOpStatusElecMoney
+			// textConsume
 			// 
-			this->textOpStatusElecMoney->Location = System::Drawing::Point(91, 288);
-			this->textOpStatusElecMoney->Name = L"textOpStatusElecMoney";
-			this->textOpStatusElecMoney->ReadOnly = true;
-			this->textOpStatusElecMoney->Size = System::Drawing::Size(196, 26);
-			this->textOpStatusElecMoney->TabIndex = 16;
-			this->textOpStatusElecMoney->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			// 
-			// label18
-			// 
-			this->label18->AutoSize = true;
-			this->label18->Location = System::Drawing::Point(6, 241);
-			this->label18->Name = L"label18";
-			this->label18->Size = System::Drawing::Size(96, 16);
-			this->label18->TabIndex = 15;
-			this->label18->Text = L"四 操作状态";
-			// 
-			// textBox7
-			// 
-			this->textBox7->Location = System::Drawing::Point(71, 115);
-			this->textBox7->Name = L"textBox7";
-			this->textBox7->Size = System::Drawing::Size(158, 26);
-			this->textBox7->TabIndex = 13;
-			this->textBox7->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textConsume->Location = System::Drawing::Point(71, 170);
+			this->textConsume->Name = L"textConsume";
+			this->textConsume->Size = System::Drawing::Size(158, 26);
+			this->textConsume->TabIndex = 13;
+			this->textConsume->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textConsume->TextChanged += gcnew System::EventHandler(this, &Form1::textConsume_TextChanged);
 			// 
 			// btnCounsume
 			// 
-			this->btnCounsume->Location = System::Drawing::Point(237, 115);
+			this->btnCounsume->Location = System::Drawing::Point(237, 170);
 			this->btnCounsume->Name = L"btnCounsume";
 			this->btnCounsume->Size = System::Drawing::Size(91, 23);
 			this->btnCounsume->TabIndex = 12;
 			this->btnCounsume->Text = L"消费";
 			this->btnCounsume->UseVisualStyleBackColor = true;
+			this->btnCounsume->Click += gcnew System::EventHandler(this, &Form1::btnCounsume_Click);
 			// 
 			// label16
 			// 
 			this->label16->AutoSize = true;
-			this->label16->Location = System::Drawing::Point(6, 83);
+			this->label16->Location = System::Drawing::Point(6, 131);
 			this->label16->Name = L"label16";
 			this->label16->Size = System::Drawing::Size(64, 16);
 			this->label16->TabIndex = 11;
@@ -626,25 +619,27 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			// btnCharge
 			// 
-			this->btnCharge->Location = System::Drawing::Point(238, 37);
+			this->btnCharge->Location = System::Drawing::Point(238, 78);
 			this->btnCharge->Name = L"btnCharge";
 			this->btnCharge->Size = System::Drawing::Size(90, 23);
 			this->btnCharge->TabIndex = 10;
 			this->btnCharge->Text = L"充值";
 			this->btnCharge->UseVisualStyleBackColor = true;
+			this->btnCharge->Click += gcnew System::EventHandler(this, &Form1::btnCharge_Click);
 			// 
-			// textBox6
+			// textCharge
 			// 
-			this->textBox6->Location = System::Drawing::Point(71, 37);
-			this->textBox6->Name = L"textBox6";
-			this->textBox6->Size = System::Drawing::Size(158, 26);
-			this->textBox6->TabIndex = 9;
-			this->textBox6->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textCharge->Location = System::Drawing::Point(71, 78);
+			this->textCharge->Name = L"textCharge";
+			this->textCharge->Size = System::Drawing::Size(158, 26);
+			this->textCharge->TabIndex = 9;
+			this->textCharge->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textCharge->TextChanged += gcnew System::EventHandler(this, &Form1::textCharge_TextChanged);
 			// 
 			// label15
 			// 
 			this->label15->AutoSize = true;
-			this->label15->Location = System::Drawing::Point(6, 8);
+			this->label15->Location = System::Drawing::Point(6, 37);
 			this->label15->Name = L"label15";
 			this->label15->Size = System::Drawing::Size(64, 16);
 			this->label15->TabIndex = 8;
@@ -652,7 +647,7 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			// textBanlanceElecMoney
 			// 
-			this->textBanlanceElecMoney->Location = System::Drawing::Point(71, 197);
+			this->textBanlanceElecMoney->Location = System::Drawing::Point(71, 266);
 			this->textBanlanceElecMoney->Name = L"textBanlanceElecMoney";
 			this->textBanlanceElecMoney->ReadOnly = true;
 			this->textBanlanceElecMoney->Size = System::Drawing::Size(158, 26);
@@ -664,7 +659,7 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			this->btnBanlance->Font = (gcnew System::Drawing::Font(L"宋体", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(134)));
-			this->btnBanlance->Location = System::Drawing::Point(237, 197);
+			this->btnBanlance->Location = System::Drawing::Point(237, 266);
 			this->btnBanlance->Name = L"btnBanlance";
 			this->btnBanlance->Size = System::Drawing::Size(91, 23);
 			this->btnBanlance->TabIndex = 6;
@@ -685,19 +680,19 @@ private: System::Windows::Forms::Label^  label29;
 			this->label14->Name = L"label14";
 			this->label14->Size = System::Drawing::Size(220, 350);
 			this->label14->TabIndex = 5;
-			this->label14->Text = resources->GetString(L"label14.Text");
+			this->label14->Text = L"\r\n操作说明：\r\n\r\n一 充值\r\n\r\n   输入充值金额，单击“充值”按钮，\r\n   可视卡屏幕上显示充值金额，确认无\r\n   误后根据操作提示完成充值。\r\n\r\n" 
+				L"二 消费\r\n\r\n   输入消费金额，单击“消费”按钮，\r\n   可视卡屏幕上显示充值金额，确认无\r\n   误后根据操作提示完成充值。\r\n\r\n三 查询余额\r\n\r\n" 
+				L"   单击“查询余额”按钮读取卡中余额";
 			// 
 			// tabPage3
 			// 
 			this->tabPage3->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->tabPage3->Controls->Add(this->pictureBoxAuthCode);
 			this->tabPage3->Controls->Add(this->textBanlanceNewUKey);
-			this->tabPage3->Controls->Add(this->button6);
-			this->tabPage3->Controls->Add(this->textOpStatusNewUKey);
-			this->tabPage3->Controls->Add(this->label25);
+			this->tabPage3->Controls->Add(this->btnUKeyBanlance);
 			this->tabPage3->Controls->Add(this->btnSendData);
 			this->tabPage3->Controls->Add(this->label24);
-			this->tabPage3->Controls->Add(this->textBox11);
+			this->tabPage3->Controls->Add(this->textTransCash);
 			this->tabPage3->Controls->Add(this->textBox10);
 			this->tabPage3->Controls->Add(this->label23);
 			this->tabPage3->Controls->Add(this->textBox9);
@@ -719,7 +714,7 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			this->pictureBoxAuthCode->Location = System::Drawing::Point(22, 177);
 			this->pictureBoxAuthCode->Name = L"pictureBoxAuthCode";
-			this->pictureBoxAuthCode->Size = System::Drawing::Size(302, 105);
+			this->pictureBoxAuthCode->Size = System::Drawing::Size(302, 159);
 			this->pictureBoxAuthCode->TabIndex = 25;
 			this->pictureBoxAuthCode->TabStop = false;
 			this->pictureBoxAuthCode->Click += gcnew System::EventHandler(this, &Form1::pictureBoxAuthCode_Click);
@@ -734,36 +729,17 @@ private: System::Windows::Forms::Label^  label29;
 			this->textBanlanceNewUKey->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->textBanlanceNewUKey->TextChanged += gcnew System::EventHandler(this, &Form1::textBanlanceNewUKey_TextChanged);
 			// 
-			// button6
+			// btnUKeyBanlance
 			// 
-			this->button6->Font = (gcnew System::Drawing::Font(L"宋体", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->btnUKeyBanlance->Font = (gcnew System::Drawing::Font(L"宋体", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(134)));
-			this->button6->Location = System::Drawing::Point(344, 21);
-			this->button6->Name = L"button6";
-			this->button6->Size = System::Drawing::Size(91, 23);
-			this->button6->TabIndex = 23;
-			this->button6->Text = L"查询余额";
-			this->button6->UseVisualStyleBackColor = true;
-			// 
-			// textOpStatusNewUKey
-			// 
-			this->textOpStatusNewUKey->Location = System::Drawing::Point(46, 320);
-			this->textOpStatusNewUKey->Name = L"textOpStatusNewUKey";
-			this->textOpStatusNewUKey->ReadOnly = true;
-			this->textOpStatusNewUKey->Size = System::Drawing::Size(237, 26);
-			this->textOpStatusNewUKey->TabIndex = 22;
-			this->textOpStatusNewUKey->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			// 
-			// label25
-			// 
-			this->label25->AutoSize = true;
-			this->label25->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->label25->Location = System::Drawing::Point(6, 294);
-			this->label25->Name = L"label25";
-			this->label25->Size = System::Drawing::Size(84, 14);
-			this->label25->TabIndex = 21;
-			this->label25->Text = L"三 操作状态";
+			this->btnUKeyBanlance->Location = System::Drawing::Point(344, 21);
+			this->btnUKeyBanlance->Name = L"btnUKeyBanlance";
+			this->btnUKeyBanlance->Size = System::Drawing::Size(91, 23);
+			this->btnUKeyBanlance->TabIndex = 23;
+			this->btnUKeyBanlance->Text = L"查询余额";
+			this->btnUKeyBanlance->UseVisualStyleBackColor = true;
+			this->btnUKeyBanlance->Click += gcnew System::EventHandler(this, &Form1::btnUKeyBanlance_Click);
 			// 
 			// btnSendData
 			// 
@@ -775,6 +751,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->btnSendData->TabIndex = 19;
 			this->btnSendData->Text = L"提交数据给可视卡";
 			this->btnSendData->UseVisualStyleBackColor = true;
+			this->btnSendData->Click += gcnew System::EventHandler(this, &Form1::btnSendData_Click);
 			// 
 			// label24
 			// 
@@ -787,13 +764,14 @@ private: System::Windows::Forms::Label^  label29;
 			this->label24->TabIndex = 18;
 			this->label24->Text = L"转账金额";
 			// 
-			// textBox11
+			// textTransCash
 			// 
-			this->textBox11->Location = System::Drawing::Point(87, 145);
-			this->textBox11->Name = L"textBox11";
-			this->textBox11->Size = System::Drawing::Size(142, 26);
-			this->textBox11->TabIndex = 17;
-			this->textBox11->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textTransCash->Location = System::Drawing::Point(87, 145);
+			this->textTransCash->Name = L"textTransCash";
+			this->textTransCash->Size = System::Drawing::Size(142, 26);
+			this->textTransCash->TabIndex = 17;
+			this->textTransCash->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textTransCash->TextChanged += gcnew System::EventHandler(this, &Form1::textTransCash_TextChanged);
 			// 
 			// textBox10
 			// 
@@ -858,6 +836,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->btnRSAKey->TabIndex = 11;
 			this->btnRSAKey->Text = L"取公钥";
 			this->btnRSAKey->UseVisualStyleBackColor = true;
+			this->btnRSAKey->Click += gcnew System::EventHandler(this, &Form1::btnRSAKey_Click);
 			// 
 			// textBox8
 			// 
@@ -891,18 +870,18 @@ private: System::Windows::Forms::Label^  label29;
 			this->label19->Name = L"label19";
 			this->label19->Size = System::Drawing::Size(220, 293);
 			this->label19->TabIndex = 6;
-			this->label19->Text = resources->GetString(L"label19.Text");
+			this->label19->Text = L"\r\n操作说明：\r\n\r\n一 生成RSA公钥\r\n\r\n   利用可视卡上SE模块生成RSA公私\r\n   钥对，并显示公钥\r\n\r\n二 转账\r\n\r\n   将源账户，目的账户" 
+				L"及转账金额信息\r\n   送可视卡，可视卡生成一认证码并显\r\n   示在可视卡上，同时回传经过卡上SE\r\n   模块处理后的交易信息，两边确认后\r\n   完成交易" 
+				L"\r\n\r\n三 查询余额\r\n\r\n   单击“查询余额”按钮读取卡中余额\r\n";
 			// 
 			// tabPage4
 			// 
-			this->tabPage4->Controls->Add(this->textOPStatusOTP);
 			this->tabPage4->Controls->Add(this->label31);
 			this->tabPage4->Controls->Add(this->pictureBoxLogIn);
-			this->tabPage4->Controls->Add(this->textBox12);
+			this->tabPage4->Controls->Add(this->textResponseCode);
 			this->tabPage4->Controls->Add(this->btnLogIn);
 			this->tabPage4->Controls->Add(this->label30);
-			this->tabPage4->Controls->Add(this->label29);
-			this->tabPage4->Controls->Add(this->btnDownloadCode);
+			this->tabPage4->Controls->Add(this->btnGenerateResponseCode);
 			this->tabPage4->Controls->Add(this->label28);
 			this->tabPage4->Controls->Add(this->textChallangeCode);
 			this->tabPage4->Controls->Add(this->btnGenerateChallangeCode);
@@ -916,16 +895,6 @@ private: System::Windows::Forms::Label^  label29;
 			this->tabPage4->Text = L"OTP";
 			this->tabPage4->UseVisualStyleBackColor = true;
 			// 
-			// textOPStatusOTP
-			// 
-			this->textOPStatusOTP->Location = System::Drawing::Point(50, 317);
-			this->textOPStatusOTP->Name = L"textOPStatusOTP";
-			this->textOPStatusOTP->ReadOnly = true;
-			this->textOPStatusOTP->Size = System::Drawing::Size(240, 26);
-			this->textOPStatusOTP->TabIndex = 22;
-			this->textOPStatusOTP->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->textOPStatusOTP->TextChanged += gcnew System::EventHandler(this, &Form1::textOPStatusOTP_TextChanged);
-			// 
 			// label31
 			// 
 			this->label31->AutoSize = true;
@@ -933,29 +902,30 @@ private: System::Windows::Forms::Label^  label29;
 				static_cast<System::Byte>(134)));
 			this->label31->Location = System::Drawing::Point(7, 300);
 			this->label31->Name = L"label31";
-			this->label31->Size = System::Drawing::Size(84, 14);
+			this->label31->Size = System::Drawing::Size(0, 14);
 			this->label31->TabIndex = 21;
-			this->label31->Text = L"五 操作状态";
 			// 
 			// pictureBoxLogIn
 			// 
 			this->pictureBoxLogIn->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBoxLogIn.Image")));
 			this->pictureBoxLogIn->Location = System::Drawing::Point(10, 192);
 			this->pictureBoxLogIn->Name = L"pictureBoxLogIn";
-			this->pictureBoxLogIn->Size = System::Drawing::Size(302, 92);
+			this->pictureBoxLogIn->Size = System::Drawing::Size(302, 142);
 			this->pictureBoxLogIn->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->pictureBoxLogIn->TabIndex = 20;
 			this->pictureBoxLogIn->TabStop = false;
 			this->pictureBoxLogIn->Visible = false;
 			this->pictureBoxLogIn->Click += gcnew System::EventHandler(this, &Form1::pictureBoxLogIn_Click);
 			// 
-			// textBox12
+			// textResponseCode
 			// 
-			this->textBox12->Location = System::Drawing::Point(10, 160);
-			this->textBox12->Name = L"textBox12";
-			this->textBox12->Size = System::Drawing::Size(201, 26);
-			this->textBox12->TabIndex = 19;
-			this->textBox12->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textResponseCode->Location = System::Drawing::Point(10, 160);
+			this->textResponseCode->Name = L"textResponseCode";
+			this->textResponseCode->ReadOnly = true;
+			this->textResponseCode->Size = System::Drawing::Size(201, 26);
+			this->textResponseCode->TabIndex = 19;
+			this->textResponseCode->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textResponseCode->TextChanged += gcnew System::EventHandler(this, &Form1::textResponseCode_TextChanged);
 			// 
 			// btnLogIn
 			// 
@@ -978,44 +948,34 @@ private: System::Windows::Forms::Label^  label29;
 			this->label30->Name = L"label30";
 			this->label30->Size = System::Drawing::Size(56, 14);
 			this->label30->TabIndex = 17;
-			this->label30->Text = L"四 登录";
+			this->label30->Text = L"三 登录";
 			// 
-			// label29
+			// btnGenerateResponseCode
 			// 
-			this->label29->AutoSize = true;
-			this->label29->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->btnGenerateResponseCode->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(134)));
-			this->label29->Location = System::Drawing::Point(6, 116);
-			this->label29->Name = L"label29";
-			this->label29->Size = System::Drawing::Size(98, 14);
-			this->label29->TabIndex = 16;
-			this->label29->Text = L"三 生成应答码";
-			// 
-			// btnDownloadCode
-			// 
-			this->btnDownloadCode->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(134)));
-			this->btnDownloadCode->Location = System::Drawing::Point(71, 79);
-			this->btnDownloadCode->Name = L"btnDownloadCode";
-			this->btnDownloadCode->Size = System::Drawing::Size(180, 23);
-			this->btnDownloadCode->TabIndex = 15;
-			this->btnDownloadCode->Text = L"下发挑战码";
-			this->btnDownloadCode->UseVisualStyleBackColor = true;
+			this->btnGenerateResponseCode->Location = System::Drawing::Point(71, 109);
+			this->btnGenerateResponseCode->Name = L"btnGenerateResponseCode";
+			this->btnGenerateResponseCode->Size = System::Drawing::Size(180, 23);
+			this->btnGenerateResponseCode->TabIndex = 15;
+			this->btnGenerateResponseCode->Text = L"生成应答码";
+			this->btnGenerateResponseCode->UseVisualStyleBackColor = true;
+			this->btnGenerateResponseCode->Click += gcnew System::EventHandler(this, &Form1::btnGenerateResponseCode_Click);
 			// 
 			// label28
 			// 
 			this->label28->AutoSize = true;
 			this->label28->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(134)));
-			this->label28->Location = System::Drawing::Point(6, 62);
+			this->label28->Location = System::Drawing::Point(7, 92);
 			this->label28->Name = L"label28";
 			this->label28->Size = System::Drawing::Size(98, 14);
 			this->label28->TabIndex = 14;
-			this->label28->Text = L"二 下发挑战码";
+			this->label28->Text = L"二 生成应答码";
 			// 
 			// textChallangeCode
 			// 
-			this->textChallangeCode->Location = System::Drawing::Point(111, 23);
+			this->textChallangeCode->Location = System::Drawing::Point(111, 47);
 			this->textChallangeCode->Name = L"textChallangeCode";
 			this->textChallangeCode->ReadOnly = true;
 			this->textChallangeCode->Size = System::Drawing::Size(201, 26);
@@ -1027,7 +987,7 @@ private: System::Windows::Forms::Label^  label29;
 			// 
 			this->btnGenerateChallangeCode->Font = (gcnew System::Drawing::Font(L"宋体", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(134)));
-			this->btnGenerateChallangeCode->Location = System::Drawing::Point(9, 25);
+			this->btnGenerateChallangeCode->Location = System::Drawing::Point(9, 47);
 			this->btnGenerateChallangeCode->Name = L"btnGenerateChallangeCode";
 			this->btnGenerateChallangeCode->Size = System::Drawing::Size(95, 23);
 			this->btnGenerateChallangeCode->TabIndex = 12;
@@ -1040,7 +1000,7 @@ private: System::Windows::Forms::Label^  label29;
 			this->label27->AutoSize = true;
 			this->label27->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(134)));
-			this->label27->Location = System::Drawing::Point(6, 8);
+			this->label27->Location = System::Drawing::Point(7, 17);
 			this->label27->Name = L"label27";
 			this->label27->Size = System::Drawing::Size(98, 14);
 			this->label27->TabIndex = 10;
@@ -1280,620 +1240,928 @@ private: System::Windows::Forms::Label^  label29;
 #pragma endregion
 	private: System::Void label2_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
-private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
-		 }
-
-private: System::Byte* lpbyteConvert_String2Byte(String^ strCmdFrame, Boolean bContinus){
-			
-			array<WCHAR>^ ch = strCmdFrame->ToCharArray();
-			 BYTE bTmp = 0;
-			 LPBYTE lpCmdFrame = (LPBYTE)malloc(strCmdFrame->Length / 2 + 3);
-			 for(int i = 0; i < ch->Length; i ++){
-				 if(ch[i] < 'a' && ch[i] >= 'A'){
-					ch[i] -= 0x37;		//char ch = 'A', (int)ch = 0x41, A->Hex = 0x0A = (Dec)10, 0x41 - 0x0A = 0x37
-				 }
-				 if(ch[i] >= 'a'){
-					ch[i] -= 0x57;		//char ch = 'a', (int)ch = 0x61, a->Hex = 0x0A = (Dec)10, 0x61 - 0x0A = 0x57
-				 }
-				 if(i % 2){
-					
-					bTmp |= (ch[i] & 0x0f);
-					*(lpCmdFrame + (i / 2 + 3)) = bTmp;
-					bTmp = 0;
-				}else{
-						
-					bTmp |= ((ch[i] << 4) & 0xf0);
-				}
- 
+	private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
-			
-
-			*lpCmdFrame = (BYTE)0x00;       //报告ID，必须为0
-			if(bContinus){
-				*(lpCmdFrame + 1) = (BYTE)0x04;
-			}          //指令类型码，04为APDU指令处理
-			else{
-				*(lpCmdFrame + 1) = (BYTE)0x84;
-			}
-			*(lpCmdFrame + 2) = (BYTE)(strCmdFrame->Length / 2);		//下发数据长度
-
-			return lpCmdFrame;
-		 }
-
-private: System::String^ lpstrConvert_TextInput(String^ lpstrTextInput){
-			const char* lpcTmp = (char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(lpstrTextInput)).ToPointer();
-			 
-			string strTmp = lpcTmp;
-			 
-			 int nTmp = atoi(strTmp.c_str());
-			 String^ str = nTmp.ToString("X");
-			 if(str->Length % 2){
-				str = "0" + str;
+	private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
-			 lpstrTextInput = "";
-			 return str;
-		 }
 
-private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventArgs^  e) {
-			 if(g_bDeviceConnected && lpstrTextInput != nullptr){
+	private: System::Byte* lpbyteConvert_String2Byte(String^ strCmdFrame, Boolean bContinus){
 
-//			 String^ strText = lpstrConvert_TextInput(lpstrTextInput);
-				 String^ strLen = lpstrTextInput->Length.ToString();
-				 String^ strCmdFrame = "80bf01000" + strLen;
-//				 array<WCHAR>^ input = lpstrTextInput->ToCharArray();
-				 const char* input = (char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(lpstrTextInput)).ToPointer();
-				 for(int i = 0; i < lpstrTextInput->Length; i ++){
+				 array<WCHAR>^ ch = strCmdFrame->ToCharArray();
+				 BYTE bTmp = 0;
+				 LPBYTE lpCmdFrame = (LPBYTE)malloc(strCmdFrame->Length / 2 + 3);
+				 for(int i = 0; i < ch->Length; i ++){
+					 if(ch[i] < 'a' && ch[i] >= 'A'){
+						 ch[i] -= 0x37;		//char ch = 'A', (int)ch = 0x41, A->Hex = 0x0A = (Dec)10, 0x41 - 0x0A = 0x37
+					 }
+					 if(ch[i] >= 'a'){
+						 ch[i] -= 0x57;		//char ch = 'a', (int)ch = 0x61, a->Hex = 0x0A = (Dec)10, 0x61 - 0x0A = 0x57
+					 }
+					 if(i % 2){
+
+						 bTmp |= (ch[i] & 0x0f);
+						 *(lpCmdFrame + (i / 2 + 3)) = bTmp;
+						 bTmp = 0;
+					 }else{
+
+						 bTmp |= ((ch[i] << 4) & 0xf0);
+					 }
+
+				 }
+
+
+				 *lpCmdFrame = (BYTE)0x00;       //报告ID，必须为0
+				 if(!bContinus){
+					 *(lpCmdFrame + 1) = (BYTE)0x04;
+				 }          //指令类型码，04为APDU指令处理
+				 else{
+					 *(lpCmdFrame + 1) = (BYTE)0x84;
+				 }
+				 *(lpCmdFrame + 2) = (BYTE)(strCmdFrame->Length / 2);		//下发数据长度
+
+				 return lpCmdFrame;
+			 }
+
+	private: System::String^ lpstrConvert_TextInput(String^ lpstrTextInput){
+				 const char* lpcTmp = (char*)(System::Runtime::InteropServices::
+					 Marshal::StringToHGlobalAnsi(lpstrTextInput)).ToPointer();
+
+				 string strTmp = lpcTmp;
+
+				 int nTmp = atoi(strTmp.c_str());
+				 String^ str = nTmp.ToString("X");
+				 if(str->Length % 2){
+					 str = "0" + str;
+				 }
+				 lpstrTextInput = "";
+				 return str;
+			 }
+
+
+	private: System::Boolean bDisplayNumOnCard(String^ lsptrNum){
+
+				 
+				 Boolean bRet = false;
+/*				 
+				 int len = 0;
+				 if(lsptrNum->Length > 9){
+					len = lsptrNum->Length / 2;
+				 }
+				 else{
+					len = lsptrNum->Length;
+				 }
+*/
+				 String^ strCmdFrame = "80bf01000" + lsptrNum->Length.ToString();
+				 const char* input = (char*)(System::Runtime::InteropServices::
+					 Marshal::StringToHGlobalAnsi(lsptrNum)).ToPointer();
+				 for(int i = 0; i < lsptrNum->Length; i ++){
 					 int n = *(input + i);
 					 strCmdFrame += n.ToString("X2");
+				 }
+				 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strCmdFrame, false);
+				 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+					 if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
+						 bRet = true;	
+					 }
+				 }
+				 return bRet;
+			 }
+
+	private: System::Void btnWriteCard_Click(System::Object^  sender, System::EventArgs^  e) {
+				 if(g_bDeviceConnected && (lpstrWriteCardNumInput != nullptr)){
+					 if(bDisplayNumOnCard(lpstrWriteCardNumInput)){
+						 textOpStatusCardTest->Text = "写卡数据操作成功";
+					 }
+					 textCardTestSW->Text = dwResponeSW.ToString("X2");
+
+				 }
+				 else if(!g_bDeviceConnected){
+					 MessageBox::Show("请先连接USB设备....");
+				 }
+				 else{
+					 MessageBox::Show("请输入需要在卡上显示的数字....\n\r");
+				 }
+			 }
+
+	private: System::String^ strReadRandomNum(){
+
+				 String^ strAPDUCmd = "0084000008";
+				 lpstrResponseData = "";
+				 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, false);
+				 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+					 if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x08)) == 0x9000){
+
+						 for(int i = 0; i < 0x08; i ++){
+
+							 String^ str = (*g_byResponseData[i]).ToString("X2");
+
+							 lpstrResponseData += str;
+						 }
+
+					 }
+
+				 }
+				 return lpstrResponseData;
+			 }
+
+
+	private: System::String^ strGetAuthCode(){
+
+
+				 String^ strAPDUCmd = "80bf080000";
+				 String^ lpstrTmp = "";
+				 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, false);
+				 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+					 while((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) != 0x9000){
+						;
+					 }
+						 strAPDUCmd = "00c0000006";
+						 lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, true);
+						 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+							 if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x06)) == 0x9000){
+								 for(int i = 0; i < 0x06; i ++){
+
+									 int n = *g_byResponseData[i] - 0x30;
+									 String^ str = n.ToString();
+
+									 lpstrTmp += str;
+									 
+								 }
+								 
+							 }
+
+						 }
+
+//					 }					 
+
+				 }
+				 return lpstrTmp;
+			 }
+
+	private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 String^ strAPDUCmd = "0084000008";
+				 LPBYTE lpCmdFrame;
+
+				 if(g_bDeviceConnected){
+					 textRandomData->Text = strReadRandomNum();
+
+					 textCardTestSW->Text = dwResponeSW.ToString("X2");
+					 textOpStatusCardTest->Text = "取随机数操作成功";
+				 }
+				 else{
+					 MessageBox::Show("请先连接USB设备");
+				 }
+
+			 }
+
+
+	private: System::Boolean bSelectFile(){
+				 Boolean	bret = false;
+				 String^ strAPDUCmd = "00a4000002";
+				 String^ strFileId = "00bf";
+				 strAPDUCmd += strFileId;
+				 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, false);
+				 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+					 if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
+						 bret = true;
+					 }
+				 }
+				 return bret;
+			 }
+	private: System::Void btnBanlance_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 if(g_bDeviceConnected){		 
+					 if((g_nBanlance = nReadBanlance()) >= 0){
+						 textBanlanceElecMoney->Text = g_nBanlance.ToString();
+					 }
+					 else{
+						 textBanlanceElecMoney->Text = "取余额操作错误....";
+					 }
+				 }
+				 else{
+					 MessageBox::Show("请先连接USB设备");
+				 }
+
+
+			 }
+
+	private: System::Int32 nReadBanlance(){
+				 int val;
+				 if(bSelectFile()){
+					 String^ strAPDUCmd = "00b0000004";
+					 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, true);
+					 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+						 if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x04)) == 0x9000){
+							 for(int i = 0; i < 0x04; i ++){
+								 String^ str = (*g_byResponseData[i]).ToString("X2");
+								 lpstrResponseData += str;
+							 }
+
+							 const char* input = (char*)(System::Runtime::InteropServices::
+								 Marshal::StringToHGlobalAnsi(lpstrResponseData)).ToPointer();
+							 sscanf_s(input, "%x", &val);
+							 g_bGetBanlance = true;		
+						 }	
+					 }else{
+						 val = -1;
+					 }
+				 }else{
+					 val = -1;
+				 }
+
+				 return val;
+			 }
+
+	private: System::Boolean bUpdataBanlance(int nBanlance){
+
+				 Boolean bRet = false;
+				 if(bSelectFile()){
+					 String^ strAPDUCmd = "00d6000004";
+					 String^ strBanlance = nBanlance.ToString("X8");
+
+					 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd + strBanlance, true);
+					 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+						 if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
+							 bRet = true;
+						 }	
+					 }
+				 }
+				 return bRet;
+
+			 }
+
+
+	private: System::Void textRandomData_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
+	private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
+			 }
+
+	private: System::Void textBanlanceElecMoney_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
+	private: System::Void textBanlanceNewUKey_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
+
+	private: System::Void pictureBoxAuthCode_Click(System::Object^  sender, System::EventArgs^  e) {
+			 }
+	private: System::Void btnLogIn_Click(System::Object^  sender, System::EventArgs^  e) {
+				 if(lpstrResponseCodeInput->Equals(lpstrResponseCode)){
+					 pictureBoxLogIn->Visible = true;
+					 MessageBox::Show("登录成功！");
+//					 pictureBoxLogIn->Image = Image::FromFile("C:/Documents and Settings/mafei/My Documents/My Pictures/aple2.bmp");
+//					 pictureBoxLogIn->Image = Image::FromFile(System::Resources::ResourceManager::GetObject("Image\IDR_IMAGE1"));
+//					 pictureBoxLogIn->Image = Image::FromFile("Image\IDR_IMAGE1");
 					 
 				 }
-			 
-			  
-			 
 
-			 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strCmdFrame, true);
-			 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
-				if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
-					textCardTestSW->Text = dwResponeSW.ToString("X2");
-					textOpStatusCardTest->Text = "写卡数据操作成功";	
-				}
-				else{
-					textCardTestSW->Text = dwResponeSW.ToString("X2");
-					textOpStatusCardTest->Text = "写卡数据读操作失败";
-				}
-			 }else{
-				 textCardTestSW->Text = "没有SW数据";
-				 textOpStatusCardTest->Text = "写卡数据写操作失败";
+
 			 }
+	private: System::Void pictureBoxLogIn_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
-			 else if(!g_bDeviceConnected){
-				  MessageBox::Show("请先连接USB设备....");
-			 }
-			 else{
-				MessageBox::Show("请输入需要在卡上显示的数字....\n\r");
-			 }
-		 }
+	private: System::Void btnGenerateChallangeCode_Click(System::Object^  sender, System::EventArgs^  e) {
 
 
-private: System::Void btnReadCard_Click(System::Object^  sender, System::EventArgs^  e) {
-			
-			
-			
-			
-			String^ strAPDUCmd = "0084000008";
-			LPBYTE lpCmdFrame;
+				 char ch[20];
+				 Random^ fixRandom = gcnew Random;
 
-			if(g_bDeviceConnected){
+				 if(g_bDeviceConnected){
+					 lpstrChallangeCode = "";
+					 for(int i= 0; i < 6; i ++){
+						 g_nChallangeCode[i] = fixRandom->Next(10);
+						 sprintf_s(ch, "%d", *g_nChallangeCode[i]);
+						 String^ str= System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)ch); 
+						 lpstrChallangeCode += str;
 
-				lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, true);
-				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
-					if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x08)) == 0x9000){
-						
-						for(int i = 0; i < 0x08; i ++){
+					 }
+					 textChallangeCode->Text = lpstrChallangeCode;
 
-							String^ str = (*g_byResponseData[i]).ToString("X2");
-							
-							lpstrResponseData += str;
-						}
-						textRandomData->Text = lpstrResponseData;
-						lpstrResponseData = "";
-						textCardTestSW->Text = dwResponeSW.ToString("X2");
-						textOpStatusCardTest->Text = "取随机数操作成功";
-					}
-					else{
-						textOpStatusCardTest->Text = "取随机数接收数据失败";	
-					}
-				}else{
-					textOpStatusCardTest->Text = "取随机数下发指令失败";
-				}
-				 
-//				free(lpCmdFrame);
-			 }
-			 else{
-				MessageBox::Show("请先连接USB设备");
-			 }
-			 
-		 }
-
-
-private: System::Boolean bSelectFile(){
-			 Boolean	bret = false;
-			 String^ strAPDUCmd = "00a4000002";
-				String^ strFileId = "00bf";
-				strAPDUCmd += strFileId;
-				LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, true);
-				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
-					if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
-						bret = true;
-					}
-				}
-				return bret;
-		 }
-private: System::Void btnBanlance_Click(System::Object^  sender, System::EventArgs^  e) {
-			 
-			 
-			 String^ str;
-
-			 str = "18628";
-			 textBanlanceElecMoney->Text = lpstrResponseData->Format({0, D}, str);
-
-			 if(g_bDeviceConnected){
-/*
-				 String^ strAPDUCmd = "00a4000002";
-				String^ strFileId = "00bf";
-				strAPDUCmd += strFileId;
-				LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd);
-				if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
-					if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) == 0x9000){
-*/
-				 
-				 if(bSelectFile()){
-					String^ strAPDUCmd = "00b0000004";
-					   LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strAPDUCmd, false);
-					   if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
-						   if((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x04)) == 0x9000){
-								for(int i = 0; i < 0x04; i ++){
-									str = (*g_byResponseData[i]).ToString("X2");
-									lpstrResponseData += str;
-								}
-								
-								
-								const char* input = (char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(lpstrResponseData)).ToPointer();
-								DWORD tmp = strtoul(input, 0 , 10);
-								textBanlanceElecMoney->Text = lpstrResponseData->Format("D", tmp);
-						   }	
-					   }
-					}
-				}
-			 
-			 else{
-				MessageBox::Show("请先连接USB设备");
-			 }
-
-
-		 }
-
-private: System::Void textRandomData_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
-		 }
-
-private: System::Void textBanlanceElecMoney_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void textBanlanceNewUKey_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-		 }
-
-private: System::Void pictureBoxAuthCode_Click(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void btnLogIn_Click(System::Object^  sender, System::EventArgs^  e) {
-			 pictureBoxLogIn->Visible = true;
-
-		 }
-private: System::Void pictureBoxLogIn_Click(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void btnGenerateChallangeCode_Click(System::Object^  sender, System::EventArgs^  e) {
-
-			 char ch[20];
-			 Random^ fixRandom = gcnew Random;
-			 
-			 if(g_bDeviceConnected){
-			 for(int i= 0; i < 6; i ++){
-				 g_nChallangeCode[i] = fixRandom->Next(10);
-				 sprintf_s(ch, "%d", *g_nChallangeCode[i]);
-				 String^ str= System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)ch); 
-				 lpstrChallangeCode += str;
-				 
-			 }
-			 textChallangeCode->Text = lpstrChallangeCode;
-			 lpstrChallangeCode = "";
-			 textOPStatusOTP->Text = "生成挑战码成功";	
-			 }else{
-				 MessageBox::Show("请先连接USB设备");
-			 }
-		 }
-
-private: System::Void textChallangeCode_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-		 }
-
-
-private: System::Void textOPStatusOTP_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			 
-			 if(comboBoxDevice -> SelectedItem == "HED VisualCard Adaptor-USB"){
-	
-				 if(bOpenHidDevice(0x1677, 0x0340)){
-					g_bDeviceConnected = true;
-					pWriteHandle = (PHANDLE)malloc(sizeof(HANDLE));
-					pReadHandle = (PHANDLE)malloc(sizeof(HANDLE));
-					if(bInitWriteHandle(detailData, pWriteHandle) && bInitReadHandle(detailData, pReadHandle)){	 
-						MessageBox::Show("查找USB设备成功!\r\n初始化Write句柄成功!\r\n初始化Read句柄成功!\r\n");	
-					}
-					
-					
+					 //			 textOPStatusOTP->Text = "生成挑战码成功";	
 				 }else{
-						MessageBox::Show("找不到指定USB设备!\r\n请检查是否插入USB设备！\r\n");
+					 MessageBox::Show("请先连接USB设备");
 				 }
-			 }				 
+			 }
 
-		}
-
-
-bool bInitWriteHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pWriteHandle){
-	
-	*pWriteHandle = CreateFile( 
-						detailData->DevicePath,
-						GENERIC_WRITE,
-						FILE_SHARE_READ | FILE_SHARE_WRITE,
-						(LPSECURITY_ATTRIBUTES)NULL,
-						OPEN_EXISTING,
-						0,						//for write
-						NULL);
-							
-	if(*pWriteHandle != INVALID_HANDLE_VALUE){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-bool bInitReadHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pReadHandle){
-	 
-	*pReadHandle = CreateFile( 
-						detailData->DevicePath,
-						GENERIC_READ,
-						FILE_SHARE_READ | FILE_SHARE_WRITE,
-						(LPSECURITY_ATTRIBUTES)NULL,
-						OPEN_EXISTING,
-						FILE_FLAG_OVERLAPPED,						//for read
-						
-						NULL);
-							
-	if(*pReadHandle != INVALID_HANDLE_VALUE){
-		return true;
-	}else{
-		return false;
-	}
-}
+	private: System::Void textChallangeCode_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
 
 
-bool bWrite_ToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
-			
-			DWORD			dwNumberOfBytesWrite;
-			HIDP_CAPS		Capabilities;
-			PHIDP_PREPARSED_DATA		HidParsedData;
-			
-			BOOL bResult = false;
-			
-			if(*pWriteHandle != NULL){
-				HidD_GetPreparsedData(*pWriteHandle, &HidParsedData);
-		
-				/* extract the capabilities info */
-				HidP_GetCaps( HidParsedData ,&Capabilities);
-		
-				/* Free the memory allocated when getting the preparsed data */
-				HidD_FreePreparsedData(HidParsedData);
-				
-				bResult = WriteFile(*pWriteHandle, 
-								lpWriteBuff, 
-								Capabilities.OutputReportByteLength, 
-								&dwNumberOfBytesWrite,
-								NULL);
-				
-				
-			}
-			return bResult;
-	
-	}
+	private: System::Void textOPStatusOTP_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
+	private: System::Void comboBoxDevice_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+				 if(comboBoxDevice -> SelectedItem == "HED VisualCard Adaptor-USB"){
+
+					 if(bOpenHidDevice(0x1677, 0x0340)){
+						 g_bDeviceConnected = true;
+						 pWriteHandle = (PHANDLE)malloc(sizeof(HANDLE));
+						 pReadHandle = (PHANDLE)malloc(sizeof(HANDLE));
+						 if(bInitWriteHandle(detailData, pWriteHandle) && bInitReadHandle(detailData, pReadHandle)){	 
+							 MessageBox::Show("查找USB设备成功!\r\n初始化Write句柄成功!\r\n初始化Read句柄成功!\r\n");	
+						 }
 
 
-DWORD dwRead_FromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD len){
-			
-			DWORD			dwNumberOfBytesRead;
-			DWORD			dwResponseSW = 0;
-			HIDP_CAPS		Capabilities;
-			PHIDP_PREPARSED_DATA		HidParsedData;
-			OVERLAPPED		HidOverlapped;
-			HANDLE			hEvent;
-			
-			LPBYTE	 lpReadBuff = (LPBYTE)malloc(0x21);
-			
+					 }else{
+						 MessageBox::Show("找不到指定USB设备!\r\n请检查是否插入USB设备！\r\n");
+					 }
+				 }				 
 
-			/* Create a new event for report capture */
-			hEvent = CreateEvent(NULL, TRUE, TRUE, "");
-
-			/* fill the HidOverlapped structure so that Windows knows which
-			event to cause when the device sends an IN report */
-			HidOverlapped.hEvent = hEvent;
-			HidOverlapped.Offset = 0;
-			HidOverlapped.OffsetHigh = 0;
-
-			BOOL bResult = false;
-			
-//			LPCOMMTIMEOUTS lpCommitTimes = (LPCOMMTIMEOUTS)malloc(sizeof(LPCOMMTIMEOUTS));
-
-			if(*pReadHandle != NULL){
-				HidD_GetPreparsedData(*pReadHandle, &HidParsedData);
-		
-				/* extract the capabilities info */
-				HidP_GetCaps( HidParsedData ,&Capabilities);
-		
-				/* Free the memory allocated when getting the preparsed data */
-				HidD_FreePreparsedData(HidParsedData);
-				
-				bResult = ReadFile(*pReadHandle, 
-								lpReadBuff, 
-								Capabilities.InputReportByteLength,
-								&dwNumberOfBytesRead,
-								(LPOVERLAPPED)&HidOverlapped);
-								
-
-				if ( bResult == 0 )
-				{
-					// 读取错误信息
-					DWORD dwResult = GetLastError();
-		
-					// I/O端口繁忙
-					if ( dwResult == ERROR_IO_PENDING )
-					{
-
-						// 需挂起等待
-						dwResult = WaitForSingleObject ( HidOverlapped.hEvent, 2000 );
-			
-						// I/O端口正常
-						if ( dwResult == WAIT_OBJECT_0 )
-						{
-							// 去读取数据的正常返回值
-							GetOverlappedResult ( *pReadHandle, &HidOverlapped, &dwNumberOfBytesRead, FALSE );
-						}
-						else
-						{
-//							BOOL bGetTime = GetCommTimeouts(*pReadHandle, lpCommitTimes);
-							free(lpReadBuff);
-							CloseHandle(hEvent);
-							return -1;	// 等待超时
-						}
-
-					}
-					else
-					{
-						return -1;	// 不明错误
-					}
-				}
-			}
-			for(int i = 0; i < (len + 2); i ++){
-				byReadBuff[i] = *(lpReadBuff + i + 1);
-			}
-			dwResponseSW |= *byReadBuff[len];
-			
-			dwResponseSW = (dwResponseSW << 8) | (*byReadBuff[len + 1]);
-			free(lpReadBuff);
-			CloseHandle(hEvent);
-			return	dwResponseSW;
-	}
+			 }
 
 
-bool bOpenHidDevice(USHORT VID, USHORT PID){
-			GUID HidGuid;
-			HDEVINFO HidDevInfo;						/* handle to structure containing all attached HID Device information */
-			SP_DEVICE_INTERFACE_DATA devInfoData;		/* Information structure for HID devices */
-			BOOL Result = false;								/* result of getting next device information structure */
-			DWORD Index;								/* index of HidDevInfo array entry */
-			DWORD DataSize;								/* size of the DeviceInterfaceDetail structure */		
-			BOOLEAN GotRequiredSize;					/* 1-shot got device info data structure size flag */
-			DWORD RequiredSize;							/* size of device info data structure */
-			BOOLEAN DIDResult = false;							/* get device info data result */
-			HIDD_ATTRIBUTES HIDAttrib;					/* HID device attributes */
-			
-			HANDLE HidDevHandle;
+			 bool bInitWriteHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pWriteHandle){
 
-			BOOLEAN bRet = false;
+				 *pWriteHandle = CreateFile( 
+					 detailData->DevicePath,
+					 GENERIC_WRITE,
+					 FILE_SHARE_READ | FILE_SHARE_WRITE,
+					 (LPSECURITY_ATTRIBUTES)NULL,
+					 OPEN_EXISTING,
+					 0,						//for write
+					 NULL);
 
-			
-				/* initialize variables */
-				GotRequiredSize = FALSE;
+				 if(*pWriteHandle != INVALID_HANDLE_VALUE){
+					 return true;
+				 }else{
+					 return false;
+				 }
+			 }
+
+			 bool bInitReadHandle(PSP_DEVICE_INTERFACE_DETAIL_DATA detailData, PHANDLE pReadHandle){
+
+				 *pReadHandle = CreateFile( 
+					 detailData->DevicePath,
+					 GENERIC_READ,
+					 FILE_SHARE_READ | FILE_SHARE_WRITE,
+					 (LPSECURITY_ATTRIBUTES)NULL,
+					 OPEN_EXISTING,
+					 FILE_FLAG_OVERLAPPED,						//for read
+
+					 NULL);
+
+				 if(*pReadHandle != INVALID_HANDLE_VALUE){
+					 return true;
+				 }else{
+					 return false;
+				 }
+			 }
+
+
+			 bool bWrite_ToHIDDevice(PHANDLE pWriteHandle, LPBYTE lpWriteBuff){
+
+				 DWORD			dwNumberOfBytesWrite;
+				 HIDP_CAPS		Capabilities;
+				 PHIDP_PREPARSED_DATA		HidParsedData;
+
+				 BOOL bResult = false;
+
+				 if(*pWriteHandle != NULL){
+					 HidD_GetPreparsedData(*pWriteHandle, &HidParsedData);
+
+					 /* extract the capabilities info */
+					 HidP_GetCaps( HidParsedData ,&Capabilities);
+
+					 /* Free the memory allocated when getting the preparsed data */
+					 HidD_FreePreparsedData(HidParsedData);
+
+					 bResult = WriteFile(*pWriteHandle, 
+						 lpWriteBuff, 
+						 Capabilities.OutputReportByteLength, 
+						 &dwNumberOfBytesWrite,
+						 NULL);
+
+
+				 }
+				 return bResult;
+
+			 }
+
+
+			 DWORD dwRead_FromHIDDevice(PHANDLE pReadHandle, array<BYTE^>^ byReadBuff, DWORD len){
+
+				 DWORD			dwNumberOfBytesRead;
+				 DWORD			dwResponseSW = 0;
+				 HIDP_CAPS		Capabilities;
+				 PHIDP_PREPARSED_DATA		HidParsedData;
+				 OVERLAPPED		HidOverlapped;
+				 HANDLE			hEvent;
+
+				 LPBYTE	 lpReadBuff = (LPBYTE)malloc(0x21);
+
+
+				 /* Create a new event for report capture */
+				 hEvent = CreateEvent(NULL, TRUE, TRUE, "");
+
+				 /* fill the HidOverlapped structure so that Windows knows which
+				 event to cause when the device sends an IN report */
+				 HidOverlapped.hEvent = hEvent;
+				 HidOverlapped.Offset = 0;
+				 HidOverlapped.OffsetHigh = 0;
+
+				 BOOL bResult = false;
+
+				 //			LPCOMMTIMEOUTS lpCommitTimes = (LPCOMMTIMEOUTS)malloc(sizeof(LPCOMMTIMEOUTS));
+
+				 if(*pReadHandle != NULL){
+					 HidD_GetPreparsedData(*pReadHandle, &HidParsedData);
+
+					 /* extract the capabilities info */
+					 HidP_GetCaps( HidParsedData ,&Capabilities);
+
+					 /* Free the memory allocated when getting the preparsed data */
+					 HidD_FreePreparsedData(HidParsedData);
+
+					 bResult = ReadFile(*pReadHandle, 
+						 lpReadBuff, 
+						 Capabilities.InputReportByteLength,
+						 &dwNumberOfBytesRead,
+						 (LPOVERLAPPED)&HidOverlapped);
+
+
+					 if ( bResult == 0 )
+					 {
+						 // 读取错误信息
+						 DWORD dwResult = GetLastError();
+
+						 // I/O端口繁忙
+						 if ( dwResult == ERROR_IO_PENDING )
+						 {
+
+							 // 需挂起等待
+							 dwResult = WaitForSingleObject ( HidOverlapped.hEvent, INFINITE );
+
+							 // I/O端口正常
+							 if ( dwResult == WAIT_OBJECT_0 )
+							 {
+								 // 去读取数据的正常返回值
+								 GetOverlappedResult ( *pReadHandle, &HidOverlapped, &dwNumberOfBytesRead, FALSE );
+							 }
+							 else
+							 {
+								 //							BOOL bGetTime = GetCommTimeouts(*pReadHandle, lpCommitTimes);
+								 free(lpReadBuff);
+								 CloseHandle(hEvent);
+								 return -1;	// 等待超时
+							 }
+
+						 }
+						 else
+						 {
+							 return -1;	// 不明错误
+						 }
+					 }
+				 }
+				 for(int i = 0; i < (len + 2); i ++){
+					 byReadBuff[i] = *(lpReadBuff + i + 1);
+				 }
+				 dwResponseSW |= *byReadBuff[len];
+
+				 dwResponseSW = (dwResponseSW << 8) | (*byReadBuff[len + 1]);
+				 free(lpReadBuff);
+				 CloseHandle(hEvent);
+				 return	dwResponseSW;
+			 }
+
+
+			 bool bOpenHidDevice(USHORT VID, USHORT PID){
+				 GUID HidGuid;
+				 HDEVINFO HidDevInfo;						/* handle to structure containing all attached HID Device information */
+				 SP_DEVICE_INTERFACE_DATA devInfoData;		/* Information structure for HID devices */
+				 BOOL Result = false;								/* result of getting next device information structure */
+				 DWORD Index;								/* index of HidDevInfo array entry */
+				 DWORD DataSize;								/* size of the DeviceInterfaceDetail structure */		
+				 BOOLEAN GotRequiredSize;					/* 1-shot got device info data structure size flag */
+				 DWORD RequiredSize;							/* size of device info data structure */
+				 BOOLEAN DIDResult = false;							/* get device info data result */
+				 HIDD_ATTRIBUTES HIDAttrib;					/* HID device attributes */
+
+				 HANDLE HidDevHandle;
+
+				 BOOLEAN bRet = false;
+
+
+				 /* initialize variables */
+				 GotRequiredSize = FALSE;
 
 
 
-				/* 1) Get the HID Globally Unique ID from the OS */
-				HidD_GetHidGuid(&HidGuid);
+				 /* 1) Get the HID Globally Unique ID from the OS */
+				 HidD_GetHidGuid(&HidGuid);
 
 
-				/* 2) Get an array of structures containing information about
-				all attached and enumerated HIDs */
-				HidDevInfo = SetupDiGetClassDevs(	
-													&HidGuid,
-													NULL, 
-													NULL, 
-													DIGCF_PRESENT | DIGCF_INTERFACEDEVICE);
-//													DIGCF_INTERFACEDEVICE);
+				 /* 2) Get an array of structures containing information about
+				 all attached and enumerated HIDs */
+				 HidDevInfo = SetupDiGetClassDevs(	
+					 &HidGuid,
+					 NULL, 
+					 NULL, 
+					 DIGCF_PRESENT | DIGCF_INTERFACEDEVICE);
+				 //													DIGCF_INTERFACEDEVICE);
 
-				/* 3) Step through the attached device list 1 by 1 and examine
-				each of the attached devices.  When there are no more entries in
-				the array of structures, the function will return FALSE. */
-				
-				Index = 0;									/* init to first index of array */
-				devInfoData.cbSize = sizeof(devInfoData);	/* set to the size of the structure
+				 /* 3) Step through the attached device list 1 by 1 and examine
+				 each of the attached devices.  When there are no more entries in
+				 the array of structures, the function will return FALSE. */
+
+				 Index = 0;									/* init to first index of array */
+				 devInfoData.cbSize = sizeof(devInfoData);	/* set to the size of the structure
 															that will contain the device info data */
-				
-				do {
-					/* Get information about the HID device with the 'Index' array entry */
-					Result = SetupDiEnumDeviceInterfaces(	HidDevInfo, 
-															0, 
-															&HidGuid,
-															Index, 
-															&devInfoData);
-					
-					/* If we run into this condition, then there are no more entries
-					to examine, we might as well return FALSE at point */
-					if(Result == FALSE)
-					{
-						
-						/* free HID device info list resources */
-						SetupDiDestroyDeviceInfoList(HidDevInfo);
-						
-						return bRet;
-					}
+
+				 do {
+					 /* Get information about the HID device with the 'Index' array entry */
+					 Result = SetupDiEnumDeviceInterfaces(	HidDevInfo, 
+						 0, 
+						 &HidGuid,
+						 Index, 
+						 &devInfoData);
+
+					 /* If we run into this condition, then there are no more entries
+					 to examine, we might as well return FALSE at point */
+					 if(Result == FALSE)
+					 {
+
+						 /* free HID device info list resources */
+						 SetupDiDestroyDeviceInfoList(HidDevInfo);
+
+						 return bRet;
+					 }
 
 
-					if(GotRequiredSize == FALSE)
-					{
-						/* 3) Get the size of the DEVICE_INTERFACE_DETAIL_DATA
-						structure.  The first call will return an error condition, 
-						but we'll get the size of the strucure */
-						DIDResult = SetupDiGetDeviceInterfaceDetail(	HidDevInfo,
-																	&devInfoData,
-																	NULL,
-																	0,
-																	&DataSize,
-																	NULL);
-						GotRequiredSize = TRUE;
+					 if(GotRequiredSize == FALSE)
+					 {
+						 /* 3) Get the size of the DEVICE_INTERFACE_DETAIL_DATA
+						 structure.  The first call will return an error condition, 
+						 but we'll get the size of the strucure */
+						 DIDResult = SetupDiGetDeviceInterfaceDetail(	HidDevInfo,
+							 &devInfoData,
+							 NULL,
+							 0,
+							 &DataSize,
+							 NULL);
+						 GotRequiredSize = TRUE;
 
-						/* allocate memory for the HidDevInfo structure */
-						detailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA) malloc(DataSize);
-																	
-						/* set the size parameter of the structure */
-						detailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
-					}
-							
-						
-					/* 4) Now call the function with the correct size parameter.  This 
-					function will return data from one of the array members that 
-					Step #2 pointed to.  This way we can start to identify the
-					attributes of particular HID devices.  */
-					DIDResult = SetupDiGetDeviceInterfaceDetail(	HidDevInfo,
-																&devInfoData,
-																detailData,
-																DataSize,
-																&RequiredSize,
-																NULL);
-						
+						 /* allocate memory for the HidDevInfo structure */
+						 detailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA) malloc(DataSize);
 
-					/* 5) Open a file handle to the device.  Make sure the
-					attibutes specify overlapped transactions or the IN
-					transaction may block the input thread. */
-
-					HidDevHandle = CreateFile( detailData->DevicePath,
-												0,
-												FILE_SHARE_READ | FILE_SHARE_WRITE,
-												(LPSECURITY_ATTRIBUTES)NULL,
-												OPEN_EXISTING,
-												NULL,
-												NULL);
-
-						
-					/* 6) Get the Device VID & PID to see if it's the device we want */
-					if(HidDevHandle != INVALID_HANDLE_VALUE)
-					{
-						HIDAttrib.Size = sizeof(HIDAttrib);
-						HidD_GetAttributes(	HidDevHandle, &HIDAttrib);						
-						if((HIDAttrib.VendorID == VID) && (HIDAttrib.ProductID == PID))
-						{		
-							
-							/* free HID device info list resources */
-							SetupDiDestroyDeviceInfoList(HidDevInfo);
-
-							bRet = true;	/* found HID device */
-						
-						}
-						else{
-
-							bRet = false;
-						}
-						/* 7) Close the Device Handle because we didn't find the device
-						with the correct VID and PID */
-						CloseHandle(HidDevHandle);
-					}
-
-					Index++;	/* increment the array index to search the next entry */
-
-				} while(Result == TRUE);
-				return bRet;
-}
+						 /* set the size parameter of the structure */
+						 detailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
+					 }
 
 
+					 /* 4) Now call the function with the correct size parameter.  This 
+					 function will return data from one of the array members that 
+					 Step #2 pointed to.  This way we can start to identify the
+					 attributes of particular HID devices.  */
+					 DIDResult = SetupDiGetDeviceInterfaceDetail(	HidDevInfo,
+						 &devInfoData,
+						 detailData,
+						 DataSize,
+						 &RequiredSize,
+						 NULL);
 
-private: System::Void btnProbeCard_Click(System::Object^  sender, System::EventArgs^  e) {
-/*
-			 if(!g_bDeviceConnected){
+
+					 /* 5) Open a file handle to the device.  Make sure the
+					 attibutes specify overlapped transactions or the IN
+					 transaction may block the input thread. */
+
+					 HidDevHandle = CreateFile( detailData->DevicePath,
+						 0,
+						 FILE_SHARE_READ | FILE_SHARE_WRITE,
+						 (LPSECURITY_ATTRIBUTES)NULL,
+						 OPEN_EXISTING,
+						 NULL,
+						 NULL);
+
+
+					 /* 6) Get the Device VID & PID to see if it's the device we want */
+					 if(HidDevHandle != INVALID_HANDLE_VALUE)
+					 {
+						 HIDAttrib.Size = sizeof(HIDAttrib);
+						 HidD_GetAttributes(	HidDevHandle, &HIDAttrib);						
+						 if((HIDAttrib.VendorID == VID) && (HIDAttrib.ProductID == PID))
+						 {		
+
+							 /* free HID device info list resources */
+							 SetupDiDestroyDeviceInfoList(HidDevInfo);
+
+							 bRet = true;	/* found HID device */
+
+						 }
+						 else{
+
+							 bRet = false;
+						 }
+						 /* 7) Close the Device Handle because we didn't find the device
+						 with the correct VID and PID */
+						 CloseHandle(HidDevHandle);
+					 }
+
+					 Index++;	/* increment the array index to search the next entry */
+
+				 } while(Result == TRUE);
+				 return bRet;
+			 }
+
+
+
+	private: System::Void btnProbeCard_Click(System::Object^  sender, System::EventArgs^  e) {
+				 /*
+				 if(!g_bDeviceConnected){
 				 MessageBox::Show("USB设备未连接，请先连接!\r\n");
-			 }else{
+				 }else{
 				 if(bWrite_ToHIDDevice(&hDevice)){
-					MessageBox::Show("发送成功!\r\n");
+				 MessageBox::Show("发送成功!\r\n");
 				 }
+				 }
+				 */
 			 }
-*/
-		}
 
 
-private: System::Void textCardTestSW_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void textOpStatusCardTest_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-		 }
-		 
-private: System::Void textWriteCard_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 
-				  lpstrTextInput = strTextInput();
-			 
-			 
+	private: System::Void textCardTestSW_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 }
-		   
+	private: System::Void textOpStatusCardTest_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
+
+	private: System::Void textTransCash_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				 lpstrTransCashInput = strTextTransCashInput();
+			 }
+	private: System::Void textWriteCard_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+
+				 lpstrWriteCardNumInput = strTextWriteCardInput();
 
 
+			 }
 
-private: String^ strTextInput(){
-				array<WCHAR>^ lpCharArray;
-				int index = 0;
-				if(textWriteCard->TextLength > 6){
-					MessageBox::Show("请输入不超过6位的数字!\r\n");	
+	private: System::Void textCharge_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				 lpstrChargeCashInput = strTextChargeInput();
+			 }
+
+	private: System::Void textConsume_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				 lpstrConsumeCashInput = strTextConsumeInput();
+			 }
+
+	private: System::Void textResponseCode_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				 lpstrResponseCodeInput = strTextResponseCodeInput();
+			 }
+
+	private: String^ strTextResponseCodeInput(){
+				 array<WCHAR>^ lpCharArray;
+				 int index = 0;
+				 if(textResponseCode->TextLength > 6){
+					 MessageBox::Show("请输入不超过6位的数字!\r\n");	
+				 }
+				 else{
+					 lpCharArray = textResponseCode->Text->ToCharArray();
+					 if(!textResponseCode->TextLength){
+						 index = textResponseCode->TextLength;	
+					 }else{
+						 index = textResponseCode->TextLength - 1;
+					 }
+					 if(lpCharArray->Length){
+						 if(lpCharArray[index] < 0x30 || lpCharArray[index] > 0x39){
+							 MessageBox::Show("请输入0-9的数字!\r\n");
+						 }
+					 }
+
+
+				 }
+				 return textResponseCode->Text;
+			 }
+
+	private: String^ strTextWriteCardInput(){
+				 array<WCHAR>^ lpCharArray;
+				 int index = 0;
+				 if(textWriteCard->TextLength > 6){
+					 MessageBox::Show("请输入不超过6位的数字!\r\n");	
 				 }
 				 else{
 					 lpCharArray = textWriteCard->Text->ToCharArray();
 					 if(!textWriteCard->TextLength){
-						index = textWriteCard->TextLength;	
+						 index = textWriteCard->TextLength;	
 					 }else{
-						index = textWriteCard->TextLength - 1;
+						 index = textWriteCard->TextLength - 1;
 					 }
 					 if(lpCharArray->Length){
-						if(lpCharArray[index] < 0x30 || lpCharArray[index] > 0x39){
-							MessageBox::Show("请输入0-9的数字!\r\n");
-						}
-					}
-					 
-					
+						 if(lpCharArray[index] < 0x30 || lpCharArray[index] > 0x39){
+							 MessageBox::Show("请输入0-9的数字!\r\n");
+						 }
+					 }
+
+
 				 }
 				 return textWriteCard->Text;
+			 }
+
+	private: String^ strTextChargeInput(){
+				 array<WCHAR>^ lpCharArray;
+				 int index = 0;
+				 //				if(textCharge->TextLength > 3){
+				 //					MessageBox::Show("请输入不超过1000的充值金额!\r\n");	
+				 //				 }
+				 //				 else{
+				 lpCharArray = textCharge->Text->ToCharArray();
+				 if(!textCharge->TextLength){
+					 index = textCharge->TextLength;	
+				 }else{
+					 index = textCharge->TextLength - 1;
+				 }
+				 if(lpCharArray->Length){
+					 if(lpCharArray[index] < 0x30 || lpCharArray[index] > 0x39){
+						 MessageBox::Show("请输入0-9的数字!\r\n");
+						}
+					}
+
+
+				 //				 }
+				 return textCharge->Text;
+			 }
+
+	private: String^ strTextConsumeInput(){
+				 array<WCHAR>^ lpCharArray;
+				 int index = 0;
+				 //				if(textConsume->TextLength > 3){
+				 //					MessageBox::Show("请输入不超过1000的消费金额!\r\n");	
+				 //				 }
+				 //				 else{
+				 lpCharArray = textConsume->Text->ToCharArray();
+				 if(!textConsume->TextLength){
+					 index = textConsume->TextLength;	
+				 }else{
+					 index = textConsume->TextLength - 1;
+				 }
+				 if(lpCharArray->Length){
+					 if(lpCharArray[index] < 0x30 || lpCharArray[index] > 0x39){
+						 MessageBox::Show("请输入0-9的数字!\r\n");
+						}
+					}
+
+
+				 //				 }
+				 return textConsume->Text;
+			 }
+
+	private: String^ strTextTransCashInput(){
+
+				 array<WCHAR>^ lpCharArray;
+				 int index = 0;
+				 
+				 lpCharArray = textTransCash->Text->ToCharArray();
+				 if(!textTransCash->TextLength){
+					 index = textTransCash->TextLength;	
+				 }else{
+					 index = textTransCash->TextLength - 1;
+				 }
+				 if(lpCharArray->Length){
+					 if(lpCharArray[index] < 0x30 || lpCharArray[index] > 0x39){
+						 MessageBox::Show("请输入0-9的数字!\r\n");
+						}
+					}
+
+				 return textTransCash->Text;
 		 }
 
-private: System::Void tabPage2_Click(System::Object^  sender, System::EventArgs^  e) {
-			 
+	private: System::Void tabPage2_Click(System::Object^  sender, System::EventArgs^  e) {
+
+			 }
+
+	private: System::Void btnCharge_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 int nChargedCash;
+				 Boolean bOperate = false;
+				 if(g_bDeviceConnected){		 
+					 if(!g_bGetBanlance){
+						 g_nBanlance = nReadBanlance();
+					 }
+					 if(bDisplayNumOnCard(lpstrChargeCashInput)){
+						 MessageBox::Show("请确认卡上显示的金额是否等于输入金额！\n\r"
+							 + "确认后请按下卡上的按钮，确认交易！");	
+					 }
+					 
+					 while(!bWaitCardButtonPushed()){
+							;
+						 }
+
+					 const char* lpcTmp = (char*)(System::Runtime::InteropServices::
+						 Marshal::StringToHGlobalAnsi(lpstrChargeCashInput)).ToPointer();
+					 sscanf_s(lpcTmp, "%d", &nChargedCash);
+					 g_nBanlance += nChargedCash;
+					 if(bUpdataBanlance(g_nBanlance)){
+						 String^ strTmp = g_nBanlance.ToString();
+						 Sleep(1200);
+						 if(bDisplayNumOnCard(strTmp)){
+//							 Sleep(200);
+							 MessageBox::Show("交易成功！");
+
+						 }		
+					 }
+				 }
+				 else{
+					 MessageBox::Show("请先连接USB设备");
+				 }
+			 }
+
+
+
+	private: System::Void btnCounsume_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 int nConsumeCash;
+
+				 if(g_bDeviceConnected){		 
+					 if(!g_bGetBanlance){
+						 g_nBanlance = nReadBanlance();
+					 }
+
+
+					 if(bDisplayNumOnCard(lpstrConsumeCashInput)){
+						 MessageBox::Show("请确认卡上显示的金额是否等于输入金额！\n\r"
+							 + "确认后请按下卡上的按钮，确认交易！");	
+					 }
+					 
+					 while(!bWaitCardButtonPushed()){
+							;
+						 }
+
+					 const char* lpcTmp = (char*)(System::Runtime::InteropServices::Marshal::
+						 StringToHGlobalAnsi(lpstrConsumeCashInput)).ToPointer();
+					 sscanf_s(lpcTmp, "%d", &nConsumeCash);
+					 g_nBanlance -= nConsumeCash;
+					 if(bUpdataBanlance(g_nBanlance)){
+						 String^ strTmp = g_nBanlance.ToString();
+						 Sleep(1500);
+						 if(bDisplayNumOnCard(strTmp)){
+							 MessageBox::Show("交易成功！");
+
+						 }		
+					 } 
+
+				 }
+				 else{
+					 MessageBox::Show("请先连接USB设备");
+				 }
+			 }
+
+	private: System::Boolean bWaitCardButtonPushed(){
+
+				 Boolean bRet = false;
+				 String^ strCmdFrame = "80bf060000";
+				 LPBYTE lpCmdFrame = lpbyteConvert_String2Byte(strCmdFrame, false);
+				 if(bWrite_ToHIDDevice(pWriteHandle, lpCmdFrame)){
+					 while((dwResponeSW = dwRead_FromHIDDevice(pReadHandle, g_byResponseData, 0x00)) 
+						 != 0x9000){
+							 ;
+					 }
+					 bRet = true;
+				 }
+				 return bRet;
+			 }
+
+
+
+	private: System::Void btnGenerateResponseCode_Click(System::Object^  sender, System::EventArgs^  e) {
+				 if(g_bDeviceConnected){
+					 if(bDisplayNumOnCard(lpstrChallangeCode)){
+						 MessageBox::Show("请确认挑战码是否一致\r\n若一致，请按确定\r\n" + 
+							 "并按下卡上按钮生成应答码");
+						 lpstrResponseCode = strGetAuthCode();
+						 while(!bWaitCardButtonPushed()){
+							;
+						 }
+						 Sleep(1500);
+						if(bDisplayNumOnCard(lpstrResponseCode)){
+							textResponseCode->Text = lpstrResponseCode;
+							MessageBox::Show("生成应答码成功！\r\n请输入卡上显示的应答码...");
+						}
+						 
+					 }
+				 }
+				 else{
+
+				 }
+			 }
+
+	private: System::Void btnRSAKey_Click(System::Object^  sender, System::EventArgs^  e) {
+			 }
+private: System::Void btnUKeyBanlance_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				if(g_bDeviceConnected){		 
+					 if((g_nBanlance = nReadBanlance()) >= 0){
+						 textBanlanceNewUKey->Text = g_nBanlance.ToString();
+					 }
+					 else{
+						 textBanlanceNewUKey->Text = "取余额操作错误....";
+					 }
+				 }
+				 else{
+					 MessageBox::Show("请先连接USB设备");
+				 }
+		 }
+
+private: System::Void btnSendData_Click(System::Object^  sender, System::EventArgs^  e) {
+
+			  
 		 }
 };
 }
 
 
+
 //String^ str = System::Runtime::InteropServices::Marshal::PtrToStringAnsi((IntPtr)detailData->DevicePath);
 //							MessageBox::Show(str);
-							

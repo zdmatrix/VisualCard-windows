@@ -55,6 +55,14 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Image
+//
+
+IDR_IMAGE1              Image                   "C:\\Documents and Settings\\mafei\\My Documents\\My Pictures\\adaptor\\hed2.png"
+IDR_IMAGE2              Image                   "C:\\Documents and Settings\\mafei\\My Documents\\My Pictures\\adaptor\\hed3.png"
 #endif    // 中文(中华人民共和国) resources
 /////////////////////////////////////////////////////////////////////////////
 

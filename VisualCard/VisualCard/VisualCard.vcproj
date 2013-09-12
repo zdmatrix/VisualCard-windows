@@ -267,6 +267,14 @@
 				RelativePath=".\app.rc"
 				>
 			</File>
+			<File
+				RelativePath="C:\Documents and Settings\mafei\My Documents\My Pictures\adaptor\hed2.png"
+				>
+			</File>
+			<File
+				RelativePath="C:\Documents and Settings\mafei\My Documents\My Pictures\adaptor\hed3.png"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
