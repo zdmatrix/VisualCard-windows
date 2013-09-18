@@ -26,6 +26,7 @@ namespace VisualCard {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::IO;
 
 	using namespace std;
 
@@ -49,10 +50,31 @@ namespace VisualCard {
 		int g_nTextInputIndexPre;
 		int g_nTextInputIndexNow;
 		int g_nBanlance;
+		int g_nLogInNum;
 		DWORD dwResponeSW;
 
 		array<int^>^ g_nChallangeCode;
 		array<WCHAR>^ g_cTextInput;
+		array<BYTE>^ g_byImageData;
+		array<BYTE>^ g_byNUM0;
+		array<BYTE>^ g_byNUM1;
+		array<BYTE>^ g_byNUM2;
+		array<BYTE>^ g_byNUM3;
+		array<BYTE>^ g_byNUM4;
+		array<BYTE>^ g_byNUM5;
+		array<BYTE>^ g_byNUM6;
+		array<BYTE>^ g_byNUM7;
+		array<BYTE>^ g_byNUM8;
+		array<BYTE>^ g_byNUM9;
+		array<cli::array<BYTE>^>^ g_byNUM09;
+		
+		array<BYTE>^ g_byORG0;
+		array<BYTE>^ g_byORG1;
+		array<BYTE>^ g_byORG2;
+		array<BYTE>^ g_byORG3;
+		array<BYTE>^ g_byORG4;
+		array<BYTE>^ g_byORG5;
+		array<cli::array<BYTE>^>^ g_byORG;
 
 		String^ lpstrChallangeCode;
 		String^ lpstrResponseCode;
@@ -84,6 +106,22 @@ namespace VisualCard {
 		PSP_DEVICE_INTERFACE_DETAIL_DATA detailData;
 
 		PHANDLE pWriteHandle;
+	private: System::Windows::Forms::ImageList^  imageList1;
+
+	private: System::Windows::Forms::PictureBox^  pictureBoxSrcAccount;
+
+	private: System::Windows::Forms::PictureBox^  pictureBoxDstAccount;
+	private: System::Windows::Forms::PictureBox^  pictureBoxTransCash;
+
+
+
+	private: System::Windows::Forms::Label^  label25;
+	private: System::Windows::Forms::Label^  label18;
+	private: System::Windows::Forms::Label^  label33;
+	private: System::Windows::Forms::Label^  label32;
+	private: System::Windows::Forms::Label^  label29;
+
+	public: 
 		PHANDLE pReadHandle;
 
 
@@ -101,6 +139,7 @@ namespace VisualCard {
 			g_nTextInputIndexPre = 0;
 			g_nTextInputIndexNow = 0;
 			g_nBanlance = 0;
+			g_nLogInNum = 0;
 
 			g_bDeviceConnected = false;
 			g_bTextInput = false;
@@ -114,6 +153,28 @@ namespace VisualCard {
 			g_byResponseData = gcnew array<BYTE^>(33);
 			g_cTextInput = gcnew array<WCHAR>(20);
 			g_nChallangeCode = gcnew array<int^>(6);
+			g_byImageData = gcnew array<BYTE>(470);
+			g_byNUM0 = gcnew array<BYTE>{ 7, 1, 2, 4, 6, 5, 3, 1 };
+			g_byNUM1 = gcnew array<BYTE>{ 2, 2, 6 };
+			g_byNUM2 = gcnew array<BYTE>{ 6, 1, 2, 4, 3, 5, 6 };
+			g_byNUM3 = gcnew array<BYTE>{ 7, 1, 2, 4, 3, 4, 6, 5 };
+			g_byNUM4 = gcnew array<BYTE>{ 6, 1, 3, 4, 2, 4, 6 };
+			g_byNUM5 = gcnew array<BYTE>{ 6, 2, 1, 3, 4, 6, 5 };
+			g_byNUM6 = gcnew array<BYTE>{ 7, 2, 1, 3, 4, 6, 5, 3 };
+			g_byNUM7 = gcnew array<BYTE>{ 3, 1, 2, 6 };
+			g_byNUM8 = gcnew array<BYTE>{ 9, 1, 2, 4, 6, 5, 3, 1, 3, 4 };
+			g_byNUM9 = gcnew array<BYTE>{ 7, 4, 2, 1, 3, 4, 6, 5 };
+			g_byNUM09 = gcnew array<cli::array<BYTE>^>{ g_byNUM0, g_byNUM1, g_byNUM2, 
+				g_byNUM3, g_byNUM4, g_byNUM5, g_byNUM6, g_byNUM7, g_byNUM8, g_byNUM9 };
+			
+			g_byORG0 = gcnew array<BYTE>{0, 0};
+			g_byORG1 = gcnew array<BYTE>{6, 0};
+			g_byORG2 = gcnew array<BYTE>{0, 6};
+			g_byORG3 = gcnew array<BYTE>{6, 6};
+			g_byORG4 = gcnew array<BYTE>{0, 12};
+			g_byORG5 = gcnew array<BYTE>{6, 12};
+			g_byORG = gcnew array<cli::array<BYTE>^>{ g_byORG0, g_byORG1, g_byORG2, 
+				g_byORG3, g_byORG4, g_byORG5};
 
 			lpstrResponseData = "";
 			lpstrResponseSW = "";
@@ -199,11 +260,13 @@ namespace VisualCard {
 	private: System::Windows::Forms::Label^  label19;
 	private: System::Windows::Forms::Label^  label24;
 private: System::Windows::Forms::TextBox^  textTransCash;
+private: System::Windows::Forms::TextBox^  textBoxDstAccount;
 
 
-	private: System::Windows::Forms::TextBox^  textBox10;
+
 	private: System::Windows::Forms::Label^  label23;
-	private: System::Windows::Forms::TextBox^  textBox9;
+private: System::Windows::Forms::TextBox^  textBoxSrcAccount;
+
 	private: System::Windows::Forms::Label^  label22;
 	private: System::Windows::Forms::Label^  label21;
 
@@ -236,6 +299,7 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 
 	private: System::Windows::Forms::Button^  btnLogIn;
 	private: System::Windows::Forms::Label^  label30;
+private: System::ComponentModel::IContainer^  components;
 
 
 
@@ -246,7 +310,7 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 		/// <summary>
 		/// 必需的设计器变量。
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -255,6 +319,7 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Form1::typeid));
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
@@ -285,15 +350,23 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			this->btnBanlance = (gcnew System::Windows::Forms::Button());
 			this->label14 = (gcnew System::Windows::Forms::Label());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->label33 = (gcnew System::Windows::Forms::Label());
+			this->label32 = (gcnew System::Windows::Forms::Label());
+			this->label29 = (gcnew System::Windows::Forms::Label());
+			this->pictureBoxSrcAccount = (gcnew System::Windows::Forms::PictureBox());
+			this->pictureBoxDstAccount = (gcnew System::Windows::Forms::PictureBox());
+			this->pictureBoxTransCash = (gcnew System::Windows::Forms::PictureBox());
+			this->label25 = (gcnew System::Windows::Forms::Label());
+			this->label18 = (gcnew System::Windows::Forms::Label());
 			this->pictureBoxAuthCode = (gcnew System::Windows::Forms::PictureBox());
 			this->textBanlanceNewUKey = (gcnew System::Windows::Forms::TextBox());
 			this->btnUKeyBanlance = (gcnew System::Windows::Forms::Button());
 			this->btnSendData = (gcnew System::Windows::Forms::Button());
 			this->label24 = (gcnew System::Windows::Forms::Label());
 			this->textTransCash = (gcnew System::Windows::Forms::TextBox());
-			this->textBox10 = (gcnew System::Windows::Forms::TextBox());
+			this->textBoxDstAccount = (gcnew System::Windows::Forms::TextBox());
 			this->label23 = (gcnew System::Windows::Forms::Label());
-			this->textBox9 = (gcnew System::Windows::Forms::TextBox());
+			this->textBoxSrcAccount = (gcnew System::Windows::Forms::TextBox());
 			this->label22 = (gcnew System::Windows::Forms::Label());
 			this->label21 = (gcnew System::Windows::Forms::Label());
 			this->btnRSAKey = (gcnew System::Windows::Forms::Button());
@@ -330,10 +403,14 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->button5 = (gcnew System::Windows::Forms::Button());
+			this->imageList1 = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
 			this->tabPage3->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxSrcAccount))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxDstAccount))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxTransCash))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxAuthCode))->BeginInit();
 			this->tabPage4->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxLogIn))->BeginInit();
@@ -687,15 +764,23 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			// tabPage3
 			// 
 			this->tabPage3->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->tabPage3->Controls->Add(this->label33);
+			this->tabPage3->Controls->Add(this->label32);
+			this->tabPage3->Controls->Add(this->label29);
+			this->tabPage3->Controls->Add(this->pictureBoxSrcAccount);
+			this->tabPage3->Controls->Add(this->pictureBoxDstAccount);
+			this->tabPage3->Controls->Add(this->pictureBoxTransCash);
+			this->tabPage3->Controls->Add(this->label25);
+			this->tabPage3->Controls->Add(this->label18);
 			this->tabPage3->Controls->Add(this->pictureBoxAuthCode);
 			this->tabPage3->Controls->Add(this->textBanlanceNewUKey);
 			this->tabPage3->Controls->Add(this->btnUKeyBanlance);
 			this->tabPage3->Controls->Add(this->btnSendData);
 			this->tabPage3->Controls->Add(this->label24);
 			this->tabPage3->Controls->Add(this->textTransCash);
-			this->tabPage3->Controls->Add(this->textBox10);
+			this->tabPage3->Controls->Add(this->textBoxDstAccount);
 			this->tabPage3->Controls->Add(this->label23);
-			this->tabPage3->Controls->Add(this->textBox9);
+			this->tabPage3->Controls->Add(this->textBoxSrcAccount);
 			this->tabPage3->Controls->Add(this->label22);
 			this->tabPage3->Controls->Add(this->label21);
 			this->tabPage3->Controls->Add(this->btnRSAKey);
@@ -710,11 +795,93 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			this->tabPage3->Text = L"二代UKey";
 			this->tabPage3->UseVisualStyleBackColor = true;
 			// 
+			// label33
+			// 
+			this->label33->AutoSize = true;
+			this->label33->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label33->Location = System::Drawing::Point(19, 318);
+			this->label33->Name = L"label33";
+			this->label33->Size = System::Drawing::Size(49, 14);
+			this->label33->TabIndex = 34;
+			this->label33->Text = L"认证码";
+			// 
+			// label32
+			// 
+			this->label32->AutoSize = true;
+			this->label32->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label32->Location = System::Drawing::Point(19, 284);
+			this->label32->Name = L"label32";
+			this->label32->Size = System::Drawing::Size(63, 14);
+			this->label32->TabIndex = 33;
+			this->label32->Text = L"转账金额";
+			// 
+			// label29
+			// 
+			this->label29->AutoSize = true;
+			this->label29->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label29->Location = System::Drawing::Point(19, 250);
+			this->label29->Name = L"label29";
+			this->label29->Size = System::Drawing::Size(63, 14);
+			this->label29->TabIndex = 32;
+			this->label29->Text = L"目的账户";
+			// 
+			// pictureBoxSrcAccount
+			// 
+			this->pictureBoxSrcAccount->Location = System::Drawing::Point(87, 202);
+			this->pictureBoxSrcAccount->Name = L"pictureBoxSrcAccount";
+			this->pictureBoxSrcAccount->Size = System::Drawing::Size(237, 35);
+			this->pictureBoxSrcAccount->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBoxSrcAccount->TabIndex = 31;
+			this->pictureBoxSrcAccount->TabStop = false;
+			// 
+			// pictureBoxDstAccount
+			// 
+			this->pictureBoxDstAccount->Location = System::Drawing::Point(87, 236);
+			this->pictureBoxDstAccount->Name = L"pictureBoxDstAccount";
+			this->pictureBoxDstAccount->Size = System::Drawing::Size(237, 35);
+			this->pictureBoxDstAccount->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBoxDstAccount->TabIndex = 30;
+			this->pictureBoxDstAccount->TabStop = false;
+			this->pictureBoxDstAccount->Click += gcnew System::EventHandler(this, &Form1::pictureBox2_Click);
+			// 
+			// pictureBoxTransCash
+			// 
+			this->pictureBoxTransCash->Location = System::Drawing::Point(87, 270);
+			this->pictureBoxTransCash->Name = L"pictureBoxTransCash";
+			this->pictureBoxTransCash->Size = System::Drawing::Size(237, 35);
+			this->pictureBoxTransCash->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBoxTransCash->TabIndex = 29;
+			this->pictureBoxTransCash->TabStop = false;
+			// 
+			// label25
+			// 
+			this->label25->AutoSize = true;
+			this->label25->Font = (gcnew System::Drawing::Font(L"宋体", 10.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(134)));
+			this->label25->Location = System::Drawing::Point(19, 216);
+			this->label25->Name = L"label25";
+			this->label25->Size = System::Drawing::Size(49, 14);
+			this->label25->TabIndex = 28;
+			this->label25->Text = L"源账户";
+			// 
+			// label18
+			// 
+			this->label18->AutoSize = true;
+			this->label18->Location = System::Drawing::Point(152, 183);
+			this->label18->Name = L"label18";
+			this->label18->Size = System::Drawing::Size(104, 16);
+			this->label18->TabIndex = 27;
+			this->label18->Text = L"卡处理后数据";
+			// 
 			// pictureBoxAuthCode
 			// 
-			this->pictureBoxAuthCode->Location = System::Drawing::Point(22, 177);
+			this->pictureBoxAuthCode->Location = System::Drawing::Point(87, 304);
 			this->pictureBoxAuthCode->Name = L"pictureBoxAuthCode";
-			this->pictureBoxAuthCode->Size = System::Drawing::Size(302, 159);
+			this->pictureBoxAuthCode->Size = System::Drawing::Size(237, 35);
+			this->pictureBoxAuthCode->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->pictureBoxAuthCode->TabIndex = 25;
 			this->pictureBoxAuthCode->TabStop = false;
 			this->pictureBoxAuthCode->Click += gcnew System::EventHandler(this, &Form1::pictureBoxAuthCode_Click);
@@ -773,15 +940,16 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			this->textTransCash->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->textTransCash->TextChanged += gcnew System::EventHandler(this, &Form1::textTransCash_TextChanged);
 			// 
-			// textBox10
+			// textBoxDstAccount
 			// 
-			this->textBox10->Location = System::Drawing::Point(87, 113);
-			this->textBox10->Name = L"textBox10";
-			this->textBox10->ReadOnly = true;
-			this->textBox10->Size = System::Drawing::Size(142, 26);
-			this->textBox10->TabIndex = 16;
-			this->textBox10->Text = L"1023456789";
-			this->textBox10->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textBoxDstAccount->Location = System::Drawing::Point(87, 113);
+			this->textBoxDstAccount->Name = L"textBoxDstAccount";
+			this->textBoxDstAccount->ReadOnly = true;
+			this->textBoxDstAccount->Size = System::Drawing::Size(142, 26);
+			this->textBoxDstAccount->TabIndex = 16;
+			this->textBoxDstAccount->Text = L"1023456789";
+			this->textBoxDstAccount->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textBoxDstAccount->TextChanged += gcnew System::EventHandler(this, &Form1::textBox10_TextChanged);
 			// 
 			// label23
 			// 
@@ -794,15 +962,15 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			this->label23->TabIndex = 15;
 			this->label23->Text = L"目的账户";
 			// 
-			// textBox9
+			// textBoxSrcAccount
 			// 
-			this->textBox9->Location = System::Drawing::Point(87, 81);
-			this->textBox9->Name = L"textBox9";
-			this->textBox9->ReadOnly = true;
-			this->textBox9->Size = System::Drawing::Size(142, 26);
-			this->textBox9->TabIndex = 14;
-			this->textBox9->Text = L"1234567890";
-			this->textBox9->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->textBoxSrcAccount->Location = System::Drawing::Point(87, 81);
+			this->textBoxSrcAccount->Name = L"textBoxSrcAccount";
+			this->textBoxSrcAccount->ReadOnly = true;
+			this->textBoxSrcAccount->Size = System::Drawing::Size(142, 26);
+			this->textBoxSrcAccount->TabIndex = 14;
+			this->textBoxSrcAccount->Text = L"1234567890";
+			this->textBoxSrcAccount->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// label22
 			// 
@@ -910,7 +1078,7 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			this->pictureBoxLogIn->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBoxLogIn.Image")));
 			this->pictureBoxLogIn->Location = System::Drawing::Point(10, 192);
 			this->pictureBoxLogIn->Name = L"pictureBoxLogIn";
-			this->pictureBoxLogIn->Size = System::Drawing::Size(302, 142);
+			this->pictureBoxLogIn->Size = System::Drawing::Size(302, 163);
 			this->pictureBoxLogIn->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->pictureBoxLogIn->TabIndex = 20;
 			this->pictureBoxLogIn->TabStop = false;
@@ -1206,6 +1374,14 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			this->button5->Text = L"探卡";
 			this->button5->UseVisualStyleBackColor = true;
 			// 
+			// imageList1
+			// 
+			this->imageList1->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^  >(resources->GetObject(L"imageList1.ImageStream")));
+			this->imageList1->TransparentColor = System::Drawing::Color::Transparent;
+			this->imageList1->Images->SetKeyName(0, L"hed.png");
+			this->imageList1->Images->SetKeyName(1, L"程序猿1.jpg");
+			this->imageList1->Images->SetKeyName(2, L"2.jpg");
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
@@ -1229,6 +1405,9 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			this->tabPage2->PerformLayout();
 			this->tabPage3->ResumeLayout(false);
 			this->tabPage3->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxSrcAccount))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxDstAccount))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxTransCash))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxAuthCode))->EndInit();
 			this->tabPage4->ResumeLayout(false);
 			this->tabPage4->PerformLayout();
@@ -1506,11 +1685,16 @@ private: System::Windows::Forms::Button^  btnUKeyBanlance;
 			 }
 	private: System::Void btnLogIn_Click(System::Object^  sender, System::EventArgs^  e) {
 				 if(lpstrResponseCodeInput->Equals(lpstrResponseCode)){
+					 
+					 if(g_nLogInNum < INT_MAX){
+						g_nLogInNum ++;
+					 }
+					 else{
+						g_nLogInNum = 0;
+					 }
 					 pictureBoxLogIn->Visible = true;
+					 pictureBoxLogIn->Image = imageList1->Images[g_nLogInNum % 3];
 					 MessageBox::Show("登录成功！");
-//					 pictureBoxLogIn->Image = Image::FromFile("C:/Documents and Settings/mafei/My Documents/My Pictures/aple2.bmp");
-//					 pictureBoxLogIn->Image = Image::FromFile(System::Resources::ResourceManager::GetObject("Image\IDR_IMAGE1"));
-//					 pictureBoxLogIn->Image = Image::FromFile("Image\IDR_IMAGE1");
 					 
 				 }
 
@@ -2155,8 +2339,393 @@ private: System::Void btnUKeyBanlance_Click(System::Object^  sender, System::Eve
 		 }
 
 private: System::Void btnSendData_Click(System::Object^  sender, System::EventArgs^  e) {
+				if(g_bDeviceConnected){
 
+					if(!g_bGetBanlance){
+						 g_nBanlance = nReadBanlance();
+					 }
+
+					lpstrAuthCode = strGetAuthCode(); 
+					LPBYTE lpbySrcAccount = getImageData(textBoxSrcAccount->Text);
+					LPBYTE lpbyDstAccount = getImageData(textBoxDstAccount->Text);
+					LPBYTE lpbyAuthCode = getImageData(lpstrAuthCode);
+					if(lpstrTransCashInput == nullptr){
+						MessageBox::Show("请输入转账金额！");
+					}
+					else{
+						LPBYTE lpbyTransCashInput = getImageData(lpstrTransCashInput);
+					
+					disTransedNum(lpbySrcAccount, pictureBoxSrcAccount);
+					disTransedNum(lpbyDstAccount, pictureBoxDstAccount);
+					disTransedNum(lpbyTransCashInput, pictureBoxTransCash);
+					disTransedNum(lpbyAuthCode, pictureBoxAuthCode);
+					
+					int nTransCash = 0;
+					const char* lpcTmp = (char*)(System::Runtime::InteropServices::Marshal::
+						 StringToHGlobalAnsi(lpstrTransCashInput)).ToPointer();
+					 sscanf_s(lpcTmp, "%d", &nTransCash);
+					g_nBanlance -= nTransCash;
+
+					if(bDisplayNumOnCard(lpstrAuthCode)){
+						 MessageBox::Show("请确认交易信息是否一致\r\n若一致，请" + 
+							 "按下卡上按钮确认交易");
+
+						 while(!bWaitCardButtonPushed()){
+							;
+						 }
+						 Sleep(1500);
+						 bUpdataBanlance(g_nBanlance);
+//						 String^ lpstrTmp = g_nBanlance.ToString();
+						 bDisplayNumOnCard(g_nBanlance.ToString());
+						MessageBox::Show("交易成功！");
+						 
+					 }
+					}
+				 }
+				 else{
+
+				 }
 			  
+		 }
+
+private: System::Void disTransedNum(LPBYTE lpbyNum, PictureBox^ picbox){
+				
+					array<BYTE>^ buf = gcnew array<BYTE>(470);
+					for(int i = 0; i < 470; i ++){
+						buf[i] = (BYTE)lpbyNum[i];
+					}
+					MemoryStream^ ms = gcnew MemoryStream(470);
+					ms->Write(buf, 0, buf->Length);
+					
+					Bitmap^ myImage;
+					
+					myImage = gcnew System::Drawing::Bitmap(ms);
+					picbox->Image = dynamic_cast<Image^>(myImage);
+		
+		 }
+
+
+private: System::Byte* getImageData(String^ strData){
+
+				int nLength = strData->Length;
+				LPBYTE lpbyBmpData = (LPBYTE)malloc(470);
+				array<BYTE>^ byInput = gcnew array<BYTE>(nLength);
+				array<WCHAR>^ chData = strData->ToCharArray();
+				
+				for(int i = 0; i < nLength; i ++){
+					byInput[i] = (BYTE)(chData[i] - 0x30);
+				}
+				for(int i = 0; i < 470; i ++){
+					*(lpbyBmpData + i) = (BYTE)0xff;
+				}
+
+				// 位图文件的类型，必须为BM
+			lpbyBmpData[0x00] = 0x42;		// B
+			lpbyBmpData[0x01] = 0x4D;		// M
+
+			// 位图文件的大小，以字节为单位
+			lpbyBmpData[0x02] = 0xD6;
+			lpbyBmpData[0x03] = 0x01;
+			//把4张图片合成在一起，4 × 470
+//			lpbyBmpData[0x02] = 0x58;
+//			lpbyBmpData[0x03] = 0x07;
+			//
+			lpbyBmpData[0x04] = 0x00;
+			lpbyBmpData[0x05] = 0x00;
+
+			// 位图文件保留字，必须为0
+			lpbyBmpData[0x06] = 0x00;
+			lpbyBmpData[0x07] = 0x00;
+			lpbyBmpData[0x08] = 0x00;
+			lpbyBmpData[0x09] = 0x00;
+
+			// 位图数据的起始位置，以相对于位图
+			lpbyBmpData[0x0A] = 0x3E;
+			lpbyBmpData[0x0B] = 0x00;
+			lpbyBmpData[0x0C] = 0x00;
+			lpbyBmpData[0x0D] = 0x00;
+
+			// 位图信息头的长度
+			lpbyBmpData[0x0E] = 0x28;
+			lpbyBmpData[0x0F] = 0x00;
+			lpbyBmpData[0x10] = 0x00;
+			lpbyBmpData[0x11] = 0x00;
+
+			// 位图的宽度
+			lpbyBmpData[0x12] = 0xC0;
+			lpbyBmpData[0x13] = 0x00;
+			lpbyBmpData[0x14] = 0x00;
+			lpbyBmpData[0x15] = 0x00;
+
+			// 位图的高度
+			lpbyBmpData[0x16] = 0x11;
+//			lpbyBmpData[0x16] = 0x44;		//为了4张图拼接在一起
+			lpbyBmpData[0x17] = 0x00;
+			lpbyBmpData[0x18] = 0x00;
+			lpbyBmpData[0x19] = 0x00;
+
+			// 位图的位面数
+			lpbyBmpData[0x1A] = 0x01;
+			lpbyBmpData[0x1B] = 0x00;
+
+			// 每个象素的位数
+			lpbyBmpData[0x1C] = 0x01;
+			lpbyBmpData[0x1D] = 0x00;
+
+			// 压缩说明
+			lpbyBmpData[0x1E] = 0x00;
+			lpbyBmpData[0x1F] = 0x00;
+			lpbyBmpData[0x20] = 0x00;
+			lpbyBmpData[0x21] = 0x00;
+
+			// 用字节数表示的位图数据的大小，该数必须是4的倍数
+			lpbyBmpData[0x22] = 0x98;
+			lpbyBmpData[0x23] = 0x01;
+			
+//			lpbyBmpData[0x22] = 0x1a;
+//			lpbyBmpData[0x23] = 0x07;
+			
+			lpbyBmpData[0x24] = 0x00;
+			lpbyBmpData[0x25] = 0x00;
+
+			// 用象素/米表示的水平分辨率
+			lpbyBmpData[0x26] = 0x00;
+			lpbyBmpData[0x27] = 0x00;
+			lpbyBmpData[0x28] = 0x00;
+			lpbyBmpData[0x29] = 0x00;
+
+			// 用象素/米表示的垂直分辨率
+			lpbyBmpData[0x2A] = 0x00;
+			lpbyBmpData[0x2B] = 0x00;
+			lpbyBmpData[0x2C] = 0x00;
+			lpbyBmpData[0x2D] = 0x00;
+
+			// 位图使用的颜色数
+			lpbyBmpData[0x2E] = 0x00;
+			lpbyBmpData[0x2F] = 0x00;
+			lpbyBmpData[0x30] = 0x00;
+			lpbyBmpData[0x31] = 0x00;
+
+			// 指定重要的颜色数
+			lpbyBmpData[0x32] = 0x00;
+			lpbyBmpData[0x33] = 0x00;
+			lpbyBmpData[0x34] = 0x00;
+			lpbyBmpData[0x35] = 0x00;
+
+			// 调色板 (黑色)
+			lpbyBmpData[0x36] = 0x00;
+			lpbyBmpData[0x37] = 0x00;
+			lpbyBmpData[0x38] = 0x00;
+			lpbyBmpData[0x39] = 0x00;
+
+			// 调色板 (底色)
+			lpbyBmpData[0x3A] = 0xFF;
+			lpbyBmpData[0x3B] = 0xFF;
+			lpbyBmpData[0x3C] = 0xFF;
+			lpbyBmpData[0x3D] = 0x00;
+
+			int xstart = 0;
+			switch(nLength){
+			case 15:
+			case 16:
+				xstart = 0;
+				break;
+				
+			case 13:
+			case 14:
+				xstart = 12;
+				break;
+				
+			case 11:
+			case 12:
+				xstart = 24;
+				break;
+				
+			case 9:
+			case 10:
+				xstart = 36;
+				break;
+			
+			case 7:
+			case 8:
+				xstart = 48;
+				break;
+				
+			case 5:
+			case 6:
+				xstart = 60;
+				break;
+			
+			case 3:
+			case 4:
+				xstart = 72;
+				break;	
+				
+			case 1:
+			case 2:
+				xstart = 84;
+				break;		
+				
+			default:
+				break;
+				
+				
+			}
+
+			int ystart = 0;
+			
+			for(int i = 0; i < nLength; i ++){
+				BYTE num = (BYTE)(byInput[i] & 0x0f);
+				display7Seg(xstart, ystart, g_byNUM09[num], lpbyBmpData);
+				xstart += 12;
+			}
+			return lpbyBmpData;
+		}
+		
+
+private: System::Void display7Seg (int nx, int ny, array<BYTE>^ g_byNUM09, LPBYTE lpbyBmpData)
+		{
+			int		z = 0;
+			array<cli::array<BYTE>^>^ p = gcnew array<cli::array<BYTE>^>(6);			
+			for(int i = 0; i < 6; i ++)
+				p[i] = gcnew array<BYTE>(2);
+			Random^	rand = gcnew Random;
+			
+			
+			
+			int x1, y1, x2 = 0, y2 = 0;
+
+			for ( z = 0; z < 6; z++ )
+			{
+				BYTE random = (BYTE)(rand->Next(3));
+				
+				
+				p[z][0] = g_byORG[z][0] + random;
+				random = (BYTE)(rand->Next(3));
+				p[z][1] = g_byORG[z][1] + random;
+			}
+			
+			x1 = p[g_byNUM09[1] - 1][0];
+			y1 = p[g_byNUM09[1] - 1][1];
+			for ( z = 2; z <= g_byNUM09[0]; z++ )
+			{
+				x2 = p[g_byNUM09[z] - 1][0];
+				y2 = p[g_byNUM09[z] - 1][1];
+				drawLine (nx + x1, ny + y1, nx + x2, ny + y2, 0, lpbyBmpData);
+/*
+				if((ny + y2) < 0 ){
+					Log.v("zdmatrix", "显示7段错误，输入的n2 = " + ny + "，输入的y2 = " + y2);
+				}
+				drawLine (nx + x1, ny + y1, nx + x2, ny + y2, 0, buf);
+	
+				// 将边线加宽
+				if ( x1 < 7 && x2 < 7 )
+					drawLine ( nx + x1 - 1, ny + y1, nx + x2 - 1, ny + y2, 0, buf );
+				else if ( x1 >= 7 && x2 >= 7 )
+					drawLine ( nx + x1 + 1, ny + y1, nx + x2 + 1, ny + y2, 0, buf );
+				else if ( y1 < 7 && y2 < 7 )
+					drawLine ( nx + x1, ny + y1 - 1, nx + x2, ny + y2 - 1, 0, buf );
+				else
+					drawLine ( nx + x1, ny + y1 + 1, nx + x2, ny + y2 + 1, 0, buf );
+*/	
+				// 交换坐标
+
+				x1 = x2;
+				y1 = y2;
+				x2 = 0;
+				y2 = 0;
+			}
+			
+		 }
+
+private: System::Void drawLine(BYTE x0, BYTE y0, BYTE x1, BYTE y1, BYTE color, LPBYTE lpbyBmpData){
+			Boolean steep = false;
+			int deltax;
+			int deltay;
+			int error;
+			int ystep;
+			int x;
+			int y;
+			
+			steep = Math::Abs(y1 - y0) > Math::Abs(x1 - x0);
+			if ( steep )
+			{
+				int tmp = 0;
+				tmp = x0;
+				x0 = y0;
+				y0 = tmp;
+				
+				tmp = x1;
+				x1 = y1;
+				y1 = tmp;
+//				swap ( x0, y0 );
+//				swap ( x1, y1 );
+			}
+
+			if ( x0 > x1 )
+			{
+				int tmp = x0;
+				x0 = x1;
+				x1 = tmp;
+				
+				tmp = y0;
+				y0 = y1;
+				y1 = tmp;
+//				swap ( x0, x1 );
+//				swap ( y0, y1 );
+			}
+
+			deltax = x1 - x0;
+
+			deltay = Math::Abs( y1 - y0 );
+
+			error = deltax / 2;
+
+			y = y0;
+
+			if ( y0 < y1 )
+				ystep = 1;
+			else
+				ystep = -1;
+
+			for ( x = x0; x <= x1; x ++ )
+			{
+
+				if ( steep )
+					setPixel ( y, x, color, lpbyBmpData);
+					
+				else{
+					
+//					if(y < 0)
+//						Log.v("zdmatrix", "输入的y像素错误，为：" + y);
+					setPixel ( x, y, color, lpbyBmpData);
+				}
+				error = error - deltay;
+
+				if ( error < 0 )
+				{
+					y = y + ystep;
+					error = error + deltax;
+				}
+			}
+		}
+
+private: System::Void setPixel(int x, int y, int color, LPBYTE lpbyBmpData){
+			int gx = (0x3E + ((16 - y) * 24) + (x / 8));
+			int gPixelMask = (BYTE)((0x80 >> (x % 8)));
+			*(lpbyBmpData + gx) &= ~gPixelMask;
+//			buf[gx] &= ~gPixelMask;
+		}	
+
+private: System::Void textBox10_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
+
+private: System::Void buttonTest_Click(System::Object^  sender, System::EventArgs^  e) {
+
+		 }
+private: System::Void label18_Click(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void pictureBox2_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 };
 }
